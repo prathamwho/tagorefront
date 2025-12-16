@@ -1,0 +1,68 @@
+[
+  {
+    "id": 101,
+    "title": "CRISPR-Cas9 Gene Editing for Drought-Resistant Wheat Varieties",
+    "researcher": "Dr. Elena Vasquez",
+    "institution": "CIMMYT Mexico",
+    "abstract": "Developing a novel gene-editing protocol to suppress the Sal1 gene in Triticum aestivum. This research aims to increase crop yield by 40% in semi-arid regions without requiring additional water irrigation.",
+    "raised": 45000,
+    "goal": 120000,
+    "days_left": 14,
+    "category": "Biotech"
+  },
+  {
+    "id": 102,
+    "title": "Mitigating Hallucination in Large Language Models via RAG",
+    "researcher": "Pratham Raj",
+    "institution": "OpenAI Research",
+    "abstract": "A comparative study of Retrieval-Augmented Generation (RAG) versus Fine-Tuning for reducing factual errors in medical diagnosis AI. introducing 'Truth-Vector', a new metric for evaluating model honesty.",
+    "raised": 82000,
+    "goal": 100000,
+    "days_left": 5,
+    "category": "Artificial Intelligence"
+  },
+  {
+    "id": 103,
+    "title": "Solid-State Battery Electrolytes: The Lithium-Sulfur Breakthrough",
+    "researcher": "Prof. Akira Tanaka",
+    "institution": "Tokyo Tech",
+    "abstract": "Synthesizing a ceramic-polymer composite electrolyte that stabilizes the lithium anode interface. This aims to double the energy density of EV batteries while eliminating fire risks associated with liquid electrolytes.",
+    "raised": 150000,
+    "goal": 500000,
+    "days_left": 30,
+    "category": "Clean Energy"
+  },
+  {
+    "id": 104,
+    "title": "Non-Invasive Brain-Computer Interfaces using Ultrasound",
+    "researcher": "Neural Linkage Lab",
+    "institution": "Stanford",
+    "abstract": "Moving beyond EEG: Using high-frequency focused ultrasound to detect neural spiking activity with sub-millimeter precision through the skull, enabling thought-controlled prosthetics without surgery.",
+    "raised": 12000,
+    "goal": 80000,
+    "days_left": 45,
+    "category": "Neuroscience"
+  },
+  {
+    "id": 105,
+    "title": "Bio-Inspired Filtration for Microplastic Removal in Oceans",
+    "researcher": "Sarah Jenkins",
+    "institution": "Scripps Oceanography",
+    "abstract": "Modeling a filtration system based on the gill structure of Manta Rays. This passive system allows water to flow freely while trapping 99% of microplastics down to 5 microns in size.",
+    "raised": 28000,
+    "goal": 30000,
+    "days_left": 2,
+    "category": "Environment"
+  },
+  {
+    "id": 106,
+    "title": "Dark Matter Detection via Quantum Superconducting Sensors",
+    "researcher": "Dr. H. Gupta",
+    "institution": "CERN",
+    "abstract": "Utilizing superconducting qubits to detect single-photon interactions in a supercooled vacuum. This experiment seeks to prove the existence of axions as a candidate for Dark Matter particles.",
+    "raised": 200000,
+    "goal": 1000000,
+    "days_left": 60,
+    "category": "Astrophysics"
+  }
+]

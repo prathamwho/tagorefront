@@ -1,0 +1,91 @@
+{
+  "user": {
+    "name": "Pratham Raj",
+    "handle": "prathamwho",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/98765432?v=4",
+    "bio": "Building the Operating System for Open Science. Researching Human-AI Alignment, Decentralized Science (DeSci), and Distributed Systems.",
+    "role": "Lead Researcher & Full Stack Engineer",
+    "institution": "Delhi Technological University",
+    "location": "New Delhi, India",
+    "email": "contact@pratham.res",
+    "website": "https://tagore.research",
+    "socials": {
+      "twitter": "pratham_builds",
+      "linkedin": "in/pratham-raj"
+    },
+    "stats": {
+      "followers": 842,
+      "following": 115,
+      "total_citations": 328,
+      "total_projects": 24
+    }
+  },
+  "projects": [
+    {
+      "id": 1,
+      "title": "tagore-virtual-ecosystem",
+      "description": "A unified platform enabling seamless collaboration, crowdfunding, and version control for scientific research. Designed to replace fragmented tools like email and drive with a GitHub-like workflow for academics.",
+      "tags": ["React", "Node.js", "DeSci"],
+      "visibility": "Public",
+      "updated_at": "2 hours ago",
+      "stars": 142,
+      "forks": 12,
+      "language_color": "#61dafb"
+    },
+    {
+      "id": 2,
+      "title": "llm-hallucination-mitigation",
+      "description": "Investigating Retrieval-Augmented Generation (RAG) techniques to reduce hallucination rates in medical diagnosis models. Benchmarking Llama-3 against GPT-4 on the MedQA dataset.",
+      "tags": ["Python", "NLP", "AI Safety"],
+      "visibility": "Public",
+      "updated_at": "5 hours ago",
+      "stars": 89,
+      "forks": 24,
+      "language_color": "#3572A5"
+    },
+    {
+      "id": 3,
+      "title": "decentralized-peer-review-protocol",
+      "description": "A blockchain-based protocol for transparent, incentivized peer review. Utilizing smart contracts to reward reviewers with reputation tokens, eliminating the bias of traditional gatekeeping.",
+      "tags": ["Solidity", "Web3", "Governance"],
+      "visibility": "Public",
+      "updated_at": "1 day ago",
+      "stars": 56,
+      "forks": 8,
+      "language_color": "#AA6746"
+    },
+    {
+      "id": 4,
+      "title": "vertical-farming-iot-controller",
+      "description": "Open-source firmware for ESP32 microcontrollers to automate nutrient delivery and light cycles in high-density urban hydroponic systems. Optimized for low-power consumption.",
+      "tags": ["C++", "IoT", "Sustainability"],
+      "visibility": "Public",
+      "updated_at": "3 days ago",
+      "stars": 210,
+      "forks": 45,
+      "language_color": "#f34b7d"
+    },
+    {
+      "id": 5,
+      "title": "neural-interface-signal-processing",
+      "description": "Signal processing algorithms for non-invasive Brain-Computer Interfaces (BCI). Filtering noise from EEG data to improve motor imagery classification accuracy for prosthetic control.",
+      "tags": ["Python", "Neuroscience", "DSP"],
+      "visibility": "Public",
+      "updated_at": "4 days ago",
+      "stars": 105,
+      "forks": 18,
+      "language_color": "#3572A5"
+    },
+    {
+      "id": 6,
+      "title": "quantum-resistant-auth-service",
+      "description": "A prototype authentication microservice implementing lattice-based cryptography (Kyber) to secure user data against future quantum computing attacks.",
+      "tags": ["Go", "Cryptography", "Security"],
+      "visibility": "Private",
+      "updated_at": "5 days ago",
+      "stars": 14,
+      "forks": 2,
+      "language_color": "#00ADD8"
+    }
+  ]
+}
