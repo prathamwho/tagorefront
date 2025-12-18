@@ -1,7 +1,11 @@
 import React from 'react';
-import { Menu, Search, Bell, Plus, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Import Link
+import { useAuthStore } from '../../store/useAuthStore'; // Import Store
+import { Menu, Search, Bell, Plus, ChevronDown, LogOut, User } from 'lucide-react';
 
 const Navbar = () => {
+  const { authUser, logout } = useAuthStore(); // Get user state and logout function
+
   return (
     <nav className="bg-[#010409] text-white px-4 py-3 border-b border-gray-800 flex items-center justify-between sticky top-0 z-50">
       
@@ -11,13 +15,13 @@ const Navbar = () => {
           <Menu size={20} />
         </button>
         
-        <div className="font-bold text-xl tracking-tight flex items-center gap-2">
+        <Link to="/" className="font-bold text-xl tracking-tight flex items-center gap-2">
           {/* Simple Circle Icon as Logo Placeholder */}
           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black font-serif font-black">
             T
           </div>
           <span className="hidden md:block font-serif">Tagore</span>
-        </div>
+        </Link>
 
         {/* Desktop Search & Links */}
         <div className="hidden md:flex items-center gap-4 ml-4">
@@ -34,34 +38,57 @@ const Navbar = () => {
           </div>
 
           <div className="flex gap-4 text-sm font-semibold text-white/90">
-            <a href="#" className="hover:text-gray-300">Pull requests</a>
-            <a href="#" className="hover:text-gray-300">Issues</a>
-            <a href="#" className="hover:text-gray-300">Codespaces</a>
-            <a href="#" className="hover:text-gray-300">Marketplace</a>
-            <a href="#" className="hover:text-gray-300">Explore</a>
+            <Link to="/" className="hover:text-gray-300">Explore</Link>
+            <Link to="/workspace" className="hover:text-gray-300">Workspace</Link>
           </div>
         </div>
       </div>
 
-      {/* Right Section: User Actions */}
+      {/* Right Section: User Actions (DYNAMIC) */}
       <div className="flex items-center gap-3">
-        <button className="text-gray-400 hover:text-blue-400 border border-gray-700 rounded-md p-1 hidden sm:block">
-          <Plus size={16} />
-        </button>
         
-        <button className="relative text-gray-400 hover:text-white">
-          <Bell size={18} />
-          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-[#010409] bg-blue-500 transform translate-x-1/2 -translate-y-1/4"></span>
-        </button>
+        {authUser ? (
+          /* === STATE 1: LOGGED IN === */
+          <>
+            <button className="text-gray-400 hover:text-blue-400 border border-gray-700 rounded-md p-1 hidden sm:block">
+              <Plus size={16} />
+            </button>
+            
+            <button className="relative text-gray-400 hover:text-white">
+              <Bell size={18} />
+              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-[#010409] bg-blue-500 transform translate-x-1/2 -translate-y-1/4"></span>
+            </button>
 
-        <div className="flex items-center gap-1 cursor-pointer">
-          <img 
-            src="https://avatars.githubusercontent.com/u/98765432?v=4" 
-            alt="Profile" 
-            className="w-5 h-5 rounded-full border border-gray-600"
-          />
-          <ChevronDown size={14} className="text-gray-400" />
-        </div>
+            {/* Profile Dropdown / Actions */}
+            <div className="flex items-center gap-3 pl-2 border-l border-gray-800 ml-2">
+               <Link to="/profile" className="flex items-center gap-2 hover:bg-[#161b22] py-1 px-2 rounded transition-colors">
+                  <div className="w-6 h-6 rounded-full bg-linear-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-[10px] font-bold">
+                    {authUser.fullName ? authUser.fullName.charAt(0) : "U"}
+                  </div>
+                  <span className="text-xs font-semibold hidden md:block">{authUser.fullName}</span>
+               </Link>
+
+               <button 
+                 onClick={logout} 
+                 title="Logout"
+                 className="text-gray-400 hover:text-red-400 p-1 rounded-md hover:bg-red-400/10 transition-colors"
+               >
+                 <LogOut size={16} />
+               </button>
+            </div>
+          </>
+        ) : (
+          /* === STATE 2: LOGGED OUT === */
+          <div className="flex items-center gap-3">
+             <Link to="/login" className="text-sm font-semibold text-white hover:text-gray-300">
+               Sign in
+             </Link>
+             <Link to="/signup" className="text-sm font-semibold border border-gray-600 rounded-md px-3 py-1 hover:border-white transition-colors">
+               Sign up
+             </Link>
+          </div>
+        )}
+
       </div>
     </nav>
   );
