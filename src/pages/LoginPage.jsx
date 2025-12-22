@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { Mail, Lock, Loader2 } from 'lucide-react';
@@ -9,6 +10,11 @@ const LoginPage = () => {
     email: '',
     password: ''
   });
+  const [seePassword, setSeePassword] = useState(true);
+  const toggleSeePassword = ()=>{
+    if(seePassword===false) {setSeePassword(true)}
+    else {setSeePassword(false)}
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,7 +26,7 @@ const LoginPage = () => {
       <div className="w-full max-w-md bg-[#161b22] border border-[#30363d] rounded-lg p-8 shadow-xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-serif text-white mb-2">Welcome back</h1>
-          <p className="text-[#8b949e]">Sign in to continue your research.</p>
+          <p className="text-[#8b949e]">Sign in to continue.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -33,7 +39,11 @@ const LoginPage = () => {
                 className="w-full bg-[#0d1117] border border-[#30363d] rounded p-3 pl-10 text-white focus:border-[#1f6feb] outline-none"
                 placeholder="you@example.com"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={
+                  (e) => {
+                    setFormData({...formData, email: e.target.value})
+                  }
+                }
                 required
               />
             </div>
@@ -41,16 +51,21 @@ const LoginPage = () => {
 
           <div className="space-y-2">
             <label className="text-xs font-bold text-[#8b949e] uppercase">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b949e]" size={18} />
+            <div className="relative flex items-center">
+              <Lock className="absolute left-3 text-[#8b949e]" size={18} />
               <input 
-                type="password"
+                type={(seePassword===false)?"text":"password"}
                 className="w-full bg-[#0d1117] border border-[#30363d] rounded p-3 pl-10 text-white focus:border-[#1f6feb] outline-none"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 required
               />
+              <button type='button' 
+                      onClick={()=>{toggleSeePassword()}}
+                      className="absolute right-3 text-[#8b949e] hover:text-white">
+                {(seePassword===true)?<FaRegEye />:<FaRegEyeSlash />}
+              </button>
             </div>
           </div>
 
