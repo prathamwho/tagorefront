@@ -52,7 +52,7 @@ function App() {
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
 
       </Routes>
-      <Toaster position='top-right' richColors/>
+      <Toaster position='top-right' richColors  />
     </Router>
   );
 }
