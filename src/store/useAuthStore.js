@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "sonner";
 import { axiosInstance } from "../lib/axios.js";
 
 export const useAuthStore = create((set) => ({
@@ -26,10 +27,10 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data.savedUser }); // Backend returns { savedUser: ... }
-      alert("Account created successfully!");
+      toast.success("Account created successfully!");
     } catch (error) {
       console.log("Error in signup:", error);
-      alert(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || "Signup failed");
     } finally {
       set({ isSigningUp: false });
     }
@@ -41,10 +42,10 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.oldUser }); // Backend returns { oldUser: ... }
-      alert("Logged in successfully!");
+      toast.success("Logged in successfully!");
     } catch (error) {
       console.log("Error in login:", error);
-      alert(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       set({ isLoggingIn: false });
     }
@@ -54,9 +55,11 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
+      toast.success("Logged out successfully!")
       set({ authUser: null });
     } catch (error) {
       console.log("Error in logout:", error);
+      toast.error("Problem logging out!");
     }
   },
 }));

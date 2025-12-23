@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage'; 
 import WorkspaceSearch from './pages/WorkspaceSearch';
 import ProjectWorkspace from './pages/ProjectWorkspace';
+import { Toaster } from 'sonner';
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -51,6 +52,7 @@ function App() {
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
 
       </Routes>
+      <Toaster position='top-right' richColors/>
     </Router>
   );
 }
