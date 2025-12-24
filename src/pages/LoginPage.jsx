@@ -1,24 +1,43 @@
 import React, { useState } from 'react';
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2, Eye, EyeClosed } from 'lucide-react';
+import { axiosInstance } from '../lib/axios';
+import { toast } from 'sonner';
 
 const LoginPage = () => {
-  const { login, isLoggingIn } = useAuthStore();
+  const {
+    isLoggingIn,
+    setIsLoggingIn,
+    setAuthUser
+  } = useAuthStore();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [seePassword, setSeePassword] = useState(true);
-  const toggleSeePassword = ()=>{
-    if(seePassword===false) {setSeePassword(true)}
-    else {setSeePassword(false)}
-  }
 
-  const handleSubmit = (e) => {
+  const [seePassword, setSeePassword] = useState(true);
+
+  const toggleSeePassword = () => {
+    setSeePassword(!seePassword);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    setIsLoggingIn(true);
+
+    try {
+      const res = await axiosInstance.post('/auth/login', formData);
+      toast.success('Logged in successfully!');
+      setTimeout(() => {
+        setAuthUser(res.data.oldUser);
+      }, 1000);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Internal Server Error!');
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   return (
@@ -39,11 +58,7 @@ const LoginPage = () => {
                 className="w-full bg-[#0d1117] border border-[#30363d] rounded p-3 pl-10 text-white focus:border-[#1f6feb] outline-none"
                 placeholder="you@example.com"
                 value={formData.email}
-                onChange={
-                  (e) => {
-                    setFormData({...formData, email: e.target.value})
-                  }
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
@@ -54,17 +69,19 @@ const LoginPage = () => {
             <div className="relative flex items-center">
               <Lock className="absolute left-3 text-[#8b949e]" size={18} />
               <input 
-                type={(seePassword===false)?"text":"password"}
+                type={seePassword ? 'password' : 'text'}
                 className="w-full bg-[#0d1117] border border-[#30363d] rounded p-3 pl-10 text-white focus:border-[#1f6feb] outline-none"
                 placeholder="••••••••"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
               />
-              <button type='button' 
-                      onClick={()=>{toggleSeePassword()}}
-                      className="absolute right-3 text-[#8b949e] hover:text-white">
-                {(seePassword===true)?<FaRegEye />:<FaRegEyeSlash />}
+              <button
+                type="button"
+                onClick={toggleSeePassword}
+                className="absolute right-3 text-[#8b949e] hover:text-white"
+              >
+                {seePassword ? <Eye /> : <EyeClosed  />}
               </button>
             </div>
           </div>
