@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+/*remove input white bg color on autofill*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #23232329;
+}
+
+
+*{
+    cursor: default;
+}
+
+button, link, a{
+    cursor: pointer !important;
+}
+
+input{
+    cursor: text !important;
+}

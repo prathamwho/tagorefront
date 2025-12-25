@@ -110,7 +110,7 @@ const SignUpPage = () => {
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, role: 'Researcher' })}
-                className={`p-3 border rounded-md flex items-center justify-center gap-2 transition-all ${
+                className={` p-3 border rounded-md flex items-center justify-center gap-2 transition-all ${
                   formData.role === 'Researcher'
                     ? 'bg-[#1f6feb]/10 border-[#1f6feb] text-[#1f6feb]'
                     : 'border-[#30363d] text-[#8b949e] hover:bg-[#21262d]'
