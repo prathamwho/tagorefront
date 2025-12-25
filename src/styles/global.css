@@ -16,7 +16,7 @@ input:-webkit-autofill:active{
     cursor: default;
 }
 
-button, link, a{
+button, link, a, kbd{
     cursor: pointer !important;
 }
 
