@@ -9,4 +9,5 @@ export const useAuthStore = create((set) => ({
   setAuthUser: (user) => set({ authUser: user }),
   setIsSigningUp: (val) => set({ isSigningUp: val }),
   setIsLoggingIn: (val) => set({ isLoggingIn: val }),
+  setIsCheckingAuth: (val) => set({ isCheckingAuth: val }),
 }));

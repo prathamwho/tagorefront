@@ -30,10 +30,6 @@ const Navbar = () => {
         </button>
         
         <Link to="/" className="font-bold text-xl tracking-tight flex items-center gap-2">
-          {/* Simple Circle Icon as Logo Placeholder */}
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black font-serif font-black">
-            T
-          </div>
           <span className="hidden md:block font-serif">Tagore</span>
         </Link>
 
