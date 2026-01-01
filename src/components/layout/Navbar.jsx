@@ -1,10 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link
-import { useAuthStore } from '../../store/useAuthStore'; // Import Store
-import { Menu, Search, Bell, Plus, ChevronDown, LogOut, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuthStore } from '../../store/useAuthStore';
+import { Menu, Search, Bell, Plus, LogOut } from 'lucide-react';
+import { axiosInstance } from '../../lib/axios';
+import { toast } from 'sonner';
 
 const Navbar = () => {
-  const { authUser, logout } = useAuthStore(); // Get user state and logout function
+  const { authUser, setAuthUser } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post('/auth/logout');
+      setTimeout(() => {
+        setAuthUser(null);
+      }, 1000);
+      toast.success('Logged out successfully!');
+    } catch (error) {
+      toast.error('Problem logging out!');
+    }
+  };
 
   return (
     <nav className="bg-[#010409] text-white px-4 py-3 border-b border-gray-800 flex items-center justify-between sticky top-0 z-50">
@@ -16,10 +30,6 @@ const Navbar = () => {
         </button>
         
         <Link to="/" className="font-bold text-xl tracking-tight flex items-center gap-2">
-          {/* Simple Circle Icon as Logo Placeholder */}
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black font-serif font-black">
-            T
-          </div>
           <span className="hidden md:block font-serif">Tagore</span>
         </Link>
 
@@ -69,7 +79,7 @@ const Navbar = () => {
                </Link>
 
                <button 
-                 onClick={logout} 
+                 onClick={handleLogout} 
                  title="Logout"
                  className="text-gray-400 hover:text-red-400 p-1 rounded-md hover:bg-red-400/10 transition-colors"
                >

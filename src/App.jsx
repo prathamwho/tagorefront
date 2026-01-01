@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
 import { Loader2 } from 'lucide-react';
+import { axiosInstance } from './lib/axios';
 
 // --- IMPORT YOUR PAGES ---
 import Discover from './pages/Discover';
@@ -15,12 +16,29 @@ import ProjectWorkspace from './pages/ProjectWorkspace';
 import { Toaster } from 'sonner';
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const {
+    authUser,
+    setAuthUser,
+    isCheckingAuth,
+    setIsCheckingAuth
+  } = useAuthStore();
 
   // 1. Check if user is logged in when app loads
   useEffect(() => {
+    const checkAuth = async () => {
+      setIsCheckingAuth(true);
+      try {
+        const res = await axiosInstance.get('/auth/check-auth');
+        setAuthUser(res.data);
+      } catch {
+        setAuthUser(null);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
     checkAuth();
-  }, [checkAuth]);
+  }, []);
 
   // 2. Show loading spinner while checking backend
   if (isCheckingAuth && !authUser) {
@@ -52,7 +70,7 @@ function App() {
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
 
       </Routes>
-      <Toaster position='top-right' richColors  />
+      <Toaster position='top-right'  />
     </Router>
   );
 }

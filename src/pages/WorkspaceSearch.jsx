@@ -2,60 +2,30 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, PenTool, CheckCircle2, PlusCircle, FileText, ArrowRight, X } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
-
-// --- MOCK DATA (Realistic AI Papers) ---
-const MOCK_RESULTS = [
-  {
-    id: 101,
-    title: "Attention Is All You Need",
-    authors: "Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, Polosukhin",
-    venue: "NIPS",
-    year: 2017,
-    citations: "85,002",
-    abstract: "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely."
-  },
-  {
-    id: 102,
-    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
-    authors: "Devlin, Chang, Lee, Toutanova",
-    venue: "NAACL-HLT",
-    year: 2019,
-    citations: "72,105",
-    abstract: "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers."
-  },
-  {
-    id: 103,
-    title: "Language Models are Few-Shot Learners (GPT-3)",
-    authors: "Brown, Mann, Ryder, Subbiah et al.",
-    venue: "NeurIPS",
-    year: 2020,
-    citations: "14,200",
-    abstract: "Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training on a large corpus of text followed by fine-tuning on a specific task. We show that scaling up language models greatly improves task-agnostic, few-shot performance, sometimes even reaching competitiveness with prior state-of-the-art fine-tuning approaches."
-  },
-  {
-    id: 104,
-    title: "Visual Transformers: Tokenizing the World",
-    authors: "Dosovitskiy, Beyer, Kolesnikov, Weissenborn",
-    venue: "ICLR",
-    year: 2021,
-    citations: "12,500",
-    abstract: "While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place."
-  },
-  {
-    id: 105,
-    title: "LoRA: Low-Rank Adaptation of Large Language Models",
-    authors: "Hu, Shen, Wallis, Allen-Zhu",
-    venue: "ICLR",
-    year: 2022,
-    citations: "2,400",
-    abstract: "An important paradigm of natural language processing consists of large-scale pre-training on general domain data and adaptation to specific tasks or domains. As we pre-train larger models, full fine-tuning becomes less feasible. We propose Low-Rank Adaptation, or LoRA, which freezes the pre-trained model weights and injects trainable rank decomposition matrices."
-  }
-];
+import { toast } from 'sonner';
+import { axiosInstance } from '../lib/axios';
 
 const WorkspaceSearch = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPapers, setSelectedPapers] = useState([]);
+  const [results, setResults] = useState([]);
+
+  const getSelection = async() => {
+    try {
+        const toastId  = toast.loading("Fetching results!");
+        const res = await axiosInstance.post('/article/search', {
+            parameter: searchQuery
+        });
+        let papers = res.data.results;
+        setResults(papers);
+        toast.success("Fetched results!", {toastId});
+
+    } catch (error) {
+        console.log("Error in workspace search frontendpage", error);
+        toast.error("Unable to fetch results!");
+    }
+  }
 
   // Toggle selection logic
   const toggleSelection = (paper) => {
@@ -92,9 +62,13 @@ const WorkspaceSearch = () => {
                         placeholder="Search for papers, DOI, or keywords..."
                         className="w-full bg-transparent border-none text-white px-4 py-3 outline-none placeholder-gray-500 font-medium"
                     />
+                    
                     <div className="hidden md:flex items-center gap-2 mr-2">
-                        <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-[#8b949e] bg-[#0d1117] border border-[#30363d] rounded">⌘ K</kbd>
-                    </div>
+                        <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-[#8b949e] bg-[#0d1117] border border-[#30363d] rounded" onClick={()=>getSelection()}>
+                            Enter
+                        </kbd>
+                    </div> 
+                    
                 </div>
             </div>
 
@@ -112,7 +86,7 @@ const WorkspaceSearch = () => {
             {/* LEFT COLUMN: SEARCH RESULTS */}
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <div className="space-y-4 pb-20">
-                    {MOCK_RESULTS.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())).map((paper) => {
+                    {results.map((paper) => {
                         const isSelected = selectedPapers.find(p => p.id === paper.id);
                         return (
                             <div 
@@ -126,7 +100,7 @@ const WorkspaceSearch = () => {
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className={`text-xl font-serif font-medium leading-tight max-w-[90%] ${isSelected ? 'text-white' : 'text-[#c9d1d9]'}`}>
-                                        {paper.title}
+                                        {paper.bibjson.title}
                                     </h3>
                                     {isSelected ? (
                                         <CheckCircle2 className="text-[#238636]" size={24} />
@@ -136,15 +110,20 @@ const WorkspaceSearch = () => {
                                 </div>
 
                                 <div className="flex flex-wrap gap-y-1 gap-x-4 text-xs text-[#8b949e] mb-3 font-mono">
-                                    <span className="text-[#58a6ff]">{paper.venue} {paper.year}</span>
+                                    <span className="text-[#58a6ff]">{
+                                        paper.bibjson.journal?.publisher || "Unknown journal"
+                                        } {paper.bibjson.year}</span>
                                     <span>•</span>
-                                    <span>{paper.authors.split(',').slice(0, 3).join(', ')} et al.</span>
+                                    <span>
+                                        {paper.bibjson.author
+                                            ?.map(a => a.name)
+                                            .join(", ") || "Unknown authors"}
+                                    </span>
                                     <span>•</span>
-                                    <span>{paper.citations} citations</span>
                                 </div>
 
                                 <p className="text-sm text-[#8b949e] line-clamp-2 leading-relaxed">
-                                    {paper.abstract}
+                                    {paper.bibjson.abstract}
                                 </p>
                             </div>
                         );
@@ -176,11 +155,12 @@ const WorkspaceSearch = () => {
                             <div key={paper.id} className="bg-[#0d1117] border border-[#30363d] p-3 rounded-md flex justify-between items-start group">
                                 <div>
                                     <div className="font-medium text-sm text-[#c9d1d9] line-clamp-2 mb-1">
-                                        {paper.title}
+                                        {paper.bibjson.title}
                                     </div>
                                     <div className="text-[10px] text-[#8b949e] font-mono">
-                                        {paper.year} • {paper.venue}
+                                        {paper.bibjson.year} • {paper.bibjson.journal?.publisher}
                                     </div>
+
                                 </div>
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); toggleSelection(paper); }}
