@@ -19,7 +19,8 @@ const WorkspaceSearch = () => {
         });
         let papers = res.data.results;
         setResults(papers);
-        toast.success("Fetched results!", {toastId});
+        toast.dismiss(toastId);
+        toast.success("Fetched results!");
 
     } catch (error) {
         console.log("Error in workspace search frontendpage", error);
@@ -65,7 +66,7 @@ const WorkspaceSearch = () => {
                     
                     <div className="hidden md:flex items-center gap-2 mr-2">
                         <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-[#8b949e] bg-[#0d1117] border border-[#30363d] rounded" onClick={()=>getSelection()}>
-                            Enter
+                            Search
                         </kbd>
                     </div> 
                     
