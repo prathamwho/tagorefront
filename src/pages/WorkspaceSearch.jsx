@@ -65,7 +65,19 @@ const WorkspaceSearch = () => {
                     />
                     
                     <div className="hidden md:flex items-center gap-2 mr-2">
-                        <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-[#8b949e] bg-[#0d1117] border border-[#30363d] rounded" onClick={()=>getSelection()}>
+                        <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-[#8b949e] bg-[#0d1117] border border-[#30363d] rounded" 
+                        onClick={()=>{
+                            if(searchQuery!=""){
+                                getSelection()
+                            }
+                        }} 
+                        onKeyDown={(e)=>{
+                            if(e.key==="Enter"){
+                                e.preventDefault();
+                                getSelection()}
+                            }
+                        
+                        }>
                             Search
                         </kbd>
                     </div> 
@@ -74,7 +86,7 @@ const WorkspaceSearch = () => {
             </div>
 
             {/* Start Note Button */}
-            <button className="mt-4 flex items-center gap-2 text-sm text-[#8b949e] hover:text-white border border-[#30363d] hover:border-[#8b949e] bg-[#161b22] px-4 py-2 rounded-full transition-all">
+            <button className="mt-4 flex items-center gap-2 text-sm text-[#8b949e] hover:text-white border border-[#30363d] hover:border-[#8b949e] bg-[#161b22] px-4 py-2 rounded-full transition-all" onClick={handleEnterWorkspace}>
                 <PenTool size={14} />
                 <span>Start with a blank note</span>
             </button>
