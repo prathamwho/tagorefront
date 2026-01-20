@@ -1,104 +1,80 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Moon, Sun, LayoutGrid, Compass, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Menu, Search, Bell, Plus, LogOut } from 'lucide-react';
-import { axiosInstance } from '../../lib/axios';
-import { toast } from 'sonner';
 
 const Navbar = () => {
-  const { authUser, setAuthUser } = useAuthStore();
+  const { authUser, logout } = useAuthStore();
+  const location = useLocation();
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post('/auth/logout');
-      setTimeout(() => {
-        setAuthUser(null);
-      }, 1000);
-      toast.success('Logged out successfully!');
-    } catch (error) {
-      toast.error('Problem logging out!');
-    }
-  };
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   return (
-    <nav className="bg-[#010409] text-white px-4 py-3 border-b border-gray-800 flex items-center justify-between sticky top-0 z-50">
-      
-      {/* Left Section: Logo & Mobile Menu */}
-      <div className="flex items-center gap-4">
-        <button className="md:hidden text-gray-400 border border-gray-700 rounded-md p-1">
-          <Menu size={20} />
-        </button>
-        
-        <Link to="/" className="font-bold text-xl tracking-tight flex items-center gap-2">
-          <span className="hidden md:block font-serif">Tagore</span>
+    <nav className="sticky top-0 z-50 bg-(--surface-primary)/95 backdrop-blur-md border-b border-(--border-subtle) px-8 h-16 flex items-center justify-between transition-all">
+
+      {/* LEFT: Logo & Navigation */}
+      <div className="flex items-center gap-10">
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-(--accent-action) rounded-lg flex items-center justify-center text-white font-bold italic group-hover:scale-105 transition-transform">T</div>
+          <span className="font-bold text-xl tracking-tighter text-(--accent-action)">TAGORE</span>
         </Link>
 
-        {/* Desktop Search & Links */}
-        <div className="hidden md:flex items-center gap-4 ml-4">
-          <div className="relative">
-            <div className="flex items-center bg-[#0d1117] border border-gray-600 rounded-md px-2 py-1 w-64 focus-within:border-blue-500 focus-within:w-80 transition-all duration-200">
-              <Search size={14} className="text-gray-400 mr-2" />
-              <input 
-                type="text" 
-                placeholder="Type / to search" 
-                className="bg-transparent border-none outline-none text-sm text-white placeholder-gray-400 w-full"
-              />
-              <span className="text-gray-500 text-xs border border-gray-600 rounded px-1">/</span>
-            </div>
-          </div>
-
-          <div className="flex gap-4 text-sm font-semibold text-white/90">
-            <Link to="/" className="hover:text-gray-300">Explore</Link>
-            <Link to="/workspace" className="hover:text-gray-300">Workspace</Link>
-          </div>
+        <div className="hidden md:flex items-center gap-6 text-[12px] font-bold uppercase tracking-widest text-(--text-secondary)">
+          <Link to="/" className={`flex items-center gap-2 hover:text-(--accent-action) transition-colors ${location.pathname === '/' ? 'text-(--accent-action)' : ''}`}>
+            <Compass size={14} /> Explore
+          </Link>
+          <Link to="/workspace" className={`flex items-center gap-2 hover:text-(--accent-action) transition-colors ${location.pathname.startsWith('/workspace') ? 'text-(--accent-action)' : ''}`}>
+            <LayoutGrid size={14} /> Workspace
+          </Link>
         </div>
       </div>
 
-      {/* Right Section: User Actions (DYNAMIC) */}
-      <div className="flex items-center gap-3">
-        
+      {/* RIGHT: User Actions */}
+      <div className="flex items-center gap-5">
         {authUser ? (
-          /* === STATE 1: LOGGED IN === */
+          /* STATE: LOGGED IN */
           <>
-            <button className="text-gray-400 hover:text-blue-400 border border-gray-700 rounded-md p-1 hidden sm:block">
-              <Plus size={16} />
-            </button>
-            
-            <button className="relative text-gray-400 hover:text-white">
-              <Bell size={18} />
-              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-[#010409] bg-blue-500 transform translate-x-1/2 -translate-y-1/4"></span>
+            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-(--surface-secondary) transition-colors cursor-pointer text-(--text-secondary)">
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
 
-            {/* Profile Dropdown / Actions */}
-            <div className="flex items-center gap-3 pl-2 border-l border-gray-800 ml-2">
-               <Link to="/profile" className="flex items-center gap-2 hover:bg-[#161b22] py-1 px-2 rounded transition-colors">
-                  <div className="w-6 h-6 rounded-full bg-linear-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-[10px] font-bold">
-                    {authUser.fullName ? authUser.fullName.charAt(0) : "U"}
-                  </div>
-                  <span className="text-xs font-semibold hidden md:block">{authUser.fullName}</span>
-               </Link>
+            <div className="h-6 w-[1px] bg-(--border-subtle)"></div>
 
-               <button 
-                 onClick={handleLogout} 
-                 title="Logout"
-                 className="text-gray-400 hover:text-red-400 p-1 rounded-md hover:bg-red-400/10 transition-colors"
-               >
-                 <LogOut size={16} />
-               </button>
-            </div>
+            <Link to="/profile" className="flex items-center gap-3 group">
+              <div className="text-right hidden sm:block">
+                <p className="text-xs font-bold text-(--text-primary) leading-none mb-1">{authUser.fullName}</p>
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-tighter font-bold">Researcher</p>
+              </div>
+              <div className="w-9 h-9 rounded-full border border-(--border-subtle) p-0.5 group-hover:border-(--accent-action) transition-colors">
+                <img className="rounded-full w-full h-full object-cover" src={authUser.profilePic || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} alt="User" />
+              </div>
+            </Link>
+
+            <button onClick={logout} className="p-2 text-(--text-muted) hover:text-red-500 transition-colors cursor-pointer" title="Logout">
+              <LogOut size={18} />
+            </button>
           </>
         ) : (
-          /* === STATE 2: LOGGED OUT === */
-          <div className="flex items-center gap-3">
-             <Link to="/login" className="text-sm font-semibold text-white hover:text-gray-300">
-               Sign in
-             </Link>
-             <Link to="/signup" className="text-sm font-semibold border border-gray-600 rounded-md px-3 py-1 hover:border-white transition-colors">
-               Sign up
-             </Link>
+          /* STATE: LOGGED OUT */
+          <div className="flex items-center gap-6">
+            <Link to="/login" className="text-sm font-bold text-(--text-secondary) hover:text-(--accent-action) transition-colors">
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              className="px-6 py-2 rounded-xl text-sm font-bold border-2 border-(--accent-action) text-(--accent-action) 
+             hover:bg-(--accent-action) hover:text-white transition-all duration-300 shadow-sm active:scale-95"
+            >
+              Get Started
+            </Link>
           </div>
         )}
-
       </div>
     </nav>
   );
