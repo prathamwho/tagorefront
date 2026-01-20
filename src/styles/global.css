@@ -35,7 +35,6 @@ body {
     transition: background-color 0.3s ease;
 }
 
-<<<<<<< Updated upstream
 input{
     cursor: text !important;
 }
@@ -65,32 +64,4 @@ input{
   border-left: 3px solid #30363d;
   padding-left: 0.8rem;
   color: #8b94
-=======
-@layer utilities {
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
-  
-  @keyframes cuboid-rotate{
-  0% { transform: rotateX(0deg); }
-  20% { transform: rotateX(0deg); }
-  25% { transform: rotateX(90deg); } 
-  45% { transform: rotateX(90deg); }
-  50% { transform: rotateX(180deg); }
-  70% { transform: rotateX(180deg); }
-  75% { transform: rotateX(270deg); }
-  95% { transform: rotateX(270deg); }
-  100% { transform: rotateX(360deg); }
-}
-
-  .animate-cuboid {
-    animation: cuboid-rotate 10s infinite ease-in-out;
-  }
->>>>>>> Stashed changes
 }

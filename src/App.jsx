@@ -63,7 +63,6 @@ function App() {
           element={!authUser ? <LoginPage /> : <Navigate to="/profile" />}
         />
 
-<<<<<<< Updated upstream
         {/* === PROTECTED ROUTES === */}
         {/* If user IS logged in, show Page. If NOT, send to Login */}
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
@@ -72,24 +71,6 @@ function App() {
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
         <Route path='/profile/:userId' element={authUser ? <ProfileEdit /> : <Navigate to="/login" />}/>
         <Route path='/*' element={<NotFound/>}/>
-=======
-        <Route
-          path="/profile"
-          element={authUser ? <Profile /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/fund/:id"
-          element={authUser ? <FundProject /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/workspace"
-          element={authUser ? <WorkspaceSearch /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/workspace/ide"
-          element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />}
-        />
->>>>>>> Stashed changes
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
