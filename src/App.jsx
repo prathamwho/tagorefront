@@ -14,6 +14,8 @@ import SignUpPage from './pages/SignUpPage';
 import WorkspaceSearch from './pages/WorkspaceSearch';
 import ProjectWorkspace from './pages/ProjectWorkspace';
 import { Toaster } from 'sonner';
+import NotFound from './pages/NotFound';
+import ProfileEdit from './pages/ProfileEdit';
 
 function App() {
   const {
@@ -68,6 +70,8 @@ function App() {
         <Route path="/fund/:id" element={authUser ? <FundProject /> : <Navigate to="/login" />} />
         <Route path="/workspace" element={authUser ? <WorkspaceSearch /> : <Navigate to="/login" />} />
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
+        <Route path='/profile/:userId' element={authUser ? <ProfileEdit /> : <Navigate to="/login" />}/>
+        <Route path='/*' element={<NotFound/>}/>
 
       </Routes>
       <Toaster position='top-right'  />

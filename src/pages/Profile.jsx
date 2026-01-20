@@ -3,10 +3,15 @@ import Navbar from '../components/layout/Navbar';
 import LeftPanel from '../components/layout/LeftPanel';
 import RightProfilePanel from '../components/ui/RightProfilePanel';
 import ProjectGrid from '../components/ui/ProjectGrid';
+import { useAuthStore } from '../store/useAuthStore';
 import userProfile from '../data/userProfile.json';
 
+
 const Profile = () => {
-  const { user, projects } = userProfile;
+  const {authUser} = useAuthStore();
+  const user = authUser;
+  console.log(authUser)
+  const { projects } = userProfile;
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] font-sans">
@@ -27,9 +32,8 @@ const Profile = () => {
             {/* You can add a 'Readme' or 'Pinned' header here if needed */}
             <div className="flex justify-between items-baseline mb-4">
                <h2 className="text-[16px] font-semibold text-[#c9d1d9]">
-                 Pinned
+                 Projects
                </h2>
-               <span className="text-xs text-[#58a6ff] cursor-pointer hover:underline">Customize</span>
             </div>
             
             <ProjectGrid projects={projects} />
