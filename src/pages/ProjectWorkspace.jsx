@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import NoteEditor from '../lib/tiptap';
+
 import { useLocation, Link } from 'react-router-dom';
 import {
   FileText, FileJson, X,
@@ -9,6 +11,7 @@ import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 
 const ProjectWorkspace = () => {
+
   const location = useLocation();
   // Get papers passed from the search screen (or default to empty if visited directly)
   const initialPapers = location.state?.selectedPapers || [];
@@ -16,8 +19,102 @@ const ProjectWorkspace = () => {
   const [files, setFiles] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [noteValue, setNoteValue] = useState("<p></p>");
+
+
+  
 
   const fetchedOnce = useRef(false);
+
+
+  const uploadPaper = async (e, paperId) => {
+  try {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast.error("Upload PDF file only!");
+      return;
+    }
+
+    const toastId = toast.loading("Uploading PDF...");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", 'tagore_pdf');
+    formData.append("folder", "Tagore_Cloud");
+
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dvbbmbius/raw/upload",
+      { method: "POST", body: formData }
+    );
+
+    const data = await res.json();
+    console.log("Cloudinary response:", data);
+    if (!res.ok) {
+      toast.dismiss(toastId);
+      toast.error(data?.error?.message || "Upload failed");
+      return;
+    }
+
+    const url = data.secure_url + "?response-content-disposition=inline";
+
+
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === paperId
+          ? { ...f, pdfUrl: url, rawUrl: url } 
+          : f
+      )
+    );
+
+    toast.dismiss(toastId);
+    toast.success("PDF uploaded!");
+  } catch (err) {
+    toast.error("Upload failed!");
+    console.log(err);
+  }
+};
+
+/* NOTE DOWNLOAD */
+
+const downloadFile = (content, filename, mimeType) => {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+};
+
+  const downloadNoteAsHTML = () => {
+      const htmlDoc = `<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <title>Research Notes</title>
+    </head>
+    <body>
+    ${noteValue}
+    </body>
+    </html>`;
+
+    downloadFile(htmlDoc, "ResearchNotes.html", "text/html");
+  };
+
+  const downloadNoteAsTXT = () => {
+      const plainText = noteValue.replace(/<[^>]*>/g, "");
+      downloadFile(plainText, "ResearchNotes.txt", "text/plain");
+  };
+
+
+
 
   /* FETCHING SINGLE PAPER */
   useEffect(() => {
@@ -57,9 +154,9 @@ const ProjectWorkspace = () => {
 
         fetched.push({
           id: "note-1",
-          title: "Research Notes.md",
+          title: "Research Notes",
           type: "note",
-          content: "# My Analysis\n\nStart writing here..."
+          content: "..."
         });
 
         setFiles(fetched);
@@ -94,6 +191,7 @@ const ProjectWorkspace = () => {
         setActiveTab(nextFile ? nextFile.id: null);
     }
 
+    
   }
   return (
     <div className="h-screen flex flex-col bg-[#0d1117] text-[#c9d1d9] font-sans overflow-hidden" id="project-workspace-root">
@@ -213,7 +311,7 @@ const ProjectWorkspace = () => {
                     />
                     ) : (
                     <div className="p-6 text-sm text-[#8b949e] h-full flex flex-col items-center justify-center text-center gap-4">
-                        <p>This paper cannot be embedded as PDF.</p>
+                        <p>This paper cannot be embedded as PDF.<br/> You can download the paper and upload it for us.</p>
 
                         <a
                             href={file.rawUrl}
@@ -221,12 +319,27 @@ const ProjectWorkspace = () => {
                             rel="noreferrer"
                             className="text-[#1f6feb] underline"
                         >
-                            Open paper in new tab
+                            Open paper in new tab 
                         </a>
 
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                        {/* <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                          onClick={uploadPaper()}
+                        >
                             Upload the paper
-                        </button>
+                        </button> */}
+                        <label className="flex flex-col items-center gap-2">
+                          <input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(e) => uploadPaper(e, file.id)}
+                            className="hidden"
+                          />
+                          <div className="px-4 py-2 rounded-md bg-[#1f6feb] hover:bg-[#267af5] text-white text-xs font-medium cursor-pointer transition  cursor-pointer">
+                            Upload PDF
+                          </div>
+                        </label>
+
+
                     </div>
 
                     )}
@@ -235,10 +348,28 @@ const ProjectWorkspace = () => {
 
             {/* Note view */}
             {activeFile?.type === "note" && (
-                <div className="h-full w-full p-8 bg-[#0d1117] overflow-y-auto" id="note-editor">
-                ...
+              <div className="h-full w-full p-8 bg-[#0d1117] overflow-y-auto" id="note-editor">
+
+                <div className="flex items-center gap-2 mb-3">
+                  <button
+                    onClick={downloadNoteAsHTML}
+                    className="px-3 py-1.5 bg-[#1f6feb] hover:bg-[#267af5] text-white text-xs rounded-md"
+                  >
+                    Download HTML
+                  </button>
+
+                  <button
+                    onClick={downloadNoteAsTXT}
+                    className="px-3 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-white text-xs rounded-md border border-[#30363d]"
+                  >
+                    Download TXT
+                  </button>
                 </div>
+
+                <NoteEditor value={noteValue} onChange={setNoteValue} />
+              </div>
             )}
+
             </div>
 
         </main>
@@ -261,7 +392,7 @@ const ProjectWorkspace = () => {
               <div className="relative z-10 text-center mt-60" id="workspace-right-panel-graph-info">
                 <h3 className="text-sm font-semibold text-[#c9d1d9]" id="graph-title">Knowledge Graph</h3>
                 <p className="text-xs text-[#8b949e] mt-1" id="graph-desc">
-                  Visualizing connections between {Math.max(0, files.filter(f => f.type === "pdf").length)} papers.
+                  Visualizing connections between {Math.max(0, (files.length)-1)} papers.
                 </p>
               </div>
             </div>
@@ -290,11 +421,7 @@ const ProjectWorkspace = () => {
           <span id="workspace-file-count">{files.length} Files</span>
         </div>
         <div className="flex gap-4" id="workspace-footer-right">
-          <span id="workspace-position">Ln 1, Col 1</span>
-          <span id="workspace-encoding">UTF-8</span>
-          <span className="flex items-center gap-1" id="workspace-fullscreen">
-            <Maximize2 size={10} /> Full Screen
-          </span>
+          
         </div>
       </footer>
 
