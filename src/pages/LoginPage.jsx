@@ -128,7 +128,11 @@ const LoginPage = () => {
     <div className="min-h-screen bg-(--surface-primary) flex flex-col items-center justify-center p-6 transition-colors duration-500">
       <div className="w-full max-w-md bg-(--card-surface) border border-(--border-subtle) rounded-4xl p-10 shadow-2xl relative">
         <div className="text-center mb-10">
-          <div className="w-12 h-12 bg-(--accent-action) rounded-xl flex items-center justify-center text-white font-bold italic mx-auto mb-6 shadow-lg shadow-(--accent-action)/20">T</div>
+          <img
+            src="src/public/withoutBackground.png"
+            alt="Tagore Logo"
+            className="w-14 h-14 object-contain mx-auto mb-6 drop-shadow-md"
+          />
           <h1 className="text-3xl font-bold tracking-tight text-(--text-primary)">Welcome back</h1>
           <p className="text-(--text-secondary) mt-2 font-medium">Continue your scientific journey.</p>
         </div>
@@ -138,13 +142,13 @@ const LoginPage = () => {
             <label className="text-[10px] font-bold uppercase tracking-widest text-(--text-muted) ml-1">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" size={18} />
-              <input 
-                type="email" 
+              <input
+                type="email"
                 className="w-full bg-(--surface-primary) border border-(--border-subtle) p-4 pl-12 rounded-2xl outline-none focus:border-(--accent-action) transition-all font-medium"
                 placeholder="name@institution.edu"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                required 
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
               />
             </div>
           </div>
@@ -153,21 +157,21 @@ const LoginPage = () => {
             <label className="text-[10px] font-bold uppercase tracking-widest text-(--text-muted) ml-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" size={18} />
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className="w-full bg-(--surface-primary) border border-(--border-subtle) p-4 pl-12 rounded-2xl outline-none focus:border-(--accent-action) transition-all"
                 placeholder="••••••••"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required 
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
               />
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isLoggingIn}
-            className="w-full bg-(--accent-action) text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-(--accent-hover) transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 mt-4"
+            className="w-full bg-(--accent-action) text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-(--surface-featured) transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 mt-4"
           >
             {isLoggingIn ? <Loader2 className="animate-spin" size={20} /> : <>Sign In <ArrowRight size={18} /></>}
           </button>
@@ -179,7 +183,7 @@ const LoginPage = () => {
       </div>
 
       {/* CIRCULAR THEME TOGGLE BELOW CARD */}
-      <button 
+      <button
         onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         className="mt-8 p-4 rounded-full bg-(--card-surface) border border-(--border-subtle) text-(--text-secondary) shadow-lg hover:scale-110 transition-all cursor-pointer"
       >

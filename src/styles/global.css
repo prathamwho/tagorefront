@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-    /* Exact Colors Requested */
+    /* --- DESIGN TOKENS --- */
     --surface-primary: #FAF9F6;
     --card-surface: #FAF9F6;
     --surface-featured: #E0ECF8;
@@ -15,8 +15,21 @@
     --font-satoshi: "Satoshi", "Inter", sans-serif;
     --auth-card: rgba(255, 255, 255, 0.8);
     --input-bg: #ffffff;
+
+    /* --- TAILWIND V4 ANIMATION MAPPING --- */
+    /* This creates the .animate-cuboid class automatically */
+    --animate-cuboid: cuboid-up-down 8s infinite ease-in-out;
+
+    @keyframes cuboid-up-down {
+        0%, 20% { transform: rotateX(0deg); }
+        25%, 45% { transform: rotateX(90deg); }   /* Positive 90deg = Up to Down */
+        50%, 70% { transform: rotateX(180deg); }
+        75%, 95% { transform: rotateX(270deg); }
+        100% { transform: rotateX(360deg); }
+    }
 }
 
+/* --- DARK THEME MAPPING --- */
 [data-theme="dark"] {
     --surface-primary: #0d1117;
     --card-surface: #161b22;
@@ -28,6 +41,12 @@
     --accent-action: #58a6ff;
 }
 
+/* --- 3D UTILITIES --- */
+.perspective-1000 { perspective: 1000px; }
+.preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+
+/* --- BASE STYLES --- */
 body {
     background-color: var(--surface-primary);
     color: var(--text-primary);
@@ -35,12 +54,11 @@ body {
     transition: background-color 0.3s ease;
 }
 
-input{
+input {
     cursor: text !important;
 }
 
-/* NOTE EDITOR STYLING */
-
+/* --- NOTE EDITOR STYLING (ProseMirror) --- */
 .ProseMirror {
   white-space: pre-wrap;
   outline: none;
@@ -63,5 +81,5 @@ input{
 .ProseMirror blockquote {
   border-left: 3px solid #30363d;
   padding-left: 0.8rem;
-  color: #8b94
+  color: #8b949e;
 }

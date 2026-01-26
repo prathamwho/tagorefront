@@ -377,7 +377,7 @@ const PlaceholderAnimation = () => {
   ];
 
   return (
-    <div className="absolute inset-0 pointer-events-none perspective-1000 pl-4">
+    <div className="absolute inset-0 pointer-events-none perspective-1000 pl-5">
       <div className="w-full h-full preserve-3d animate-cuboid">
         {phrases.map((text, i) => (
           <div 

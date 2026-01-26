@@ -334,7 +334,7 @@ const downloadFile = (content, filename, mimeType) => {
                             onChange={(e) => uploadPaper(e, file.id)}
                             className="hidden"
                           />
-                          <div className="px-4 py-2 rounded-md bg-[#1f6feb] hover:bg-[#267af5] text-white text-xs font-medium cursor-pointer transition  cursor-pointer">
+                          <div className="px-4 py-2 rounded-md bg-[#1f6feb] hover:bg-[#267af5] text-white text-xs font-medium cursor-pointer transition">
                             Upload PDF
                           </div>
                         </label>

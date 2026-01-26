@@ -21,7 +21,11 @@ const Navbar = () => {
       {/* LEFT: Logo & Navigation */}
       <div className="flex items-center gap-10">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-(--accent-action) rounded-lg flex items-center justify-center text-white font-bold italic group-hover:scale-105 transition-transform">T</div>
+          <img
+            src="src/public/withoutBackground.png"
+            alt="Tagore"
+            className="w-8 h-8 bg-white rounded-l object-contain group-hover:scale-105 transition-transform"
+          />
           <span className="font-bold text-xl tracking-tighter text-(--accent-action)">TAGORE</span>
         </Link>
 
@@ -44,7 +48,7 @@ const Navbar = () => {
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
 
-            <div className="h-6 w-[1px] bg-(--border-subtle)"></div>
+            <div className="h-6 w-1px bg-(--border-subtle)"></div>
 
             <Link to="/profile" className="flex items-center gap-3 group">
               <div className="text-right hidden sm:block">
