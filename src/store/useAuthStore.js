@@ -4,9 +4,11 @@ import { toast } from "sonner";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
+  isCheckingAuth: true,
   isLoggingIn: false,
   isSigningUp: false,
   
+  setIsCheckingAuth: (value) => set({ isCheckingAuth: value }),
   setAuthUser: (user) => set({ authUser: user }),
 
   login: async (data) => {

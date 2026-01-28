@@ -39,14 +39,24 @@ export const useResearchStore = create((set, get) => ({
     isLoading: false,
 
     fetchDiscovery: async () => {
+        const { isLoading, gridPapers, featuredPapers } = get();
+
+        if (isLoading || gridPapers.length > 0 || featuredPapers.length > 0) return;
+
         set({ isLoading: true });
+
         try {
             const res = await axiosInstance.get("/article/discovery-feed");
-            set({ featuredPapers: res.data.featured, gridPapers: res.data.grid, isLoading: false });
+            set({
+                featuredPapers: res.data.featured,
+                gridPapers: res.data.grid,
+                isLoading: false
+            });
         } catch (error) {
             set({ isLoading: false });
         }
     },
+
 
     fetchPaperById: async (id) => {
         set({ isLoading: true, selectedPaper: null });

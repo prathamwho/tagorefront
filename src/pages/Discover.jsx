@@ -10,8 +10,9 @@ const Discover = () => {
 
   useEffect(() => {
     fetchDiscovery();
-  }, []);
-
+    console.log("meow meow",gridPapers)
+  }, [gridPapers]);
+  
   return (
     <div className="min-h-screen bg-(--surface-primary)">
       <Navbar />
@@ -23,30 +24,6 @@ const Discover = () => {
         </p>
       </header>
 
-      {/* Featured */}
-      <section className="max-w-7xl mx-auto px-6 mb-12">
-        <div className="bg-(--surface-featured) rounded-3xl p-10 md:p-12 flex flex-col justify-center min-h-64 relative">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl font-bold leading-tight mb-4 text-(--text-primary)">
-              {isLoading
-                ? "Fetching..."
-                : featuredPapers[0]?.title || "Oceanic Carbon Sequestration Through Algae Bio-domes"}
-            </h2>
-            <p className="text-base text-(--text-secondary) mb-8">
-              A scalable solution for reversing ocean acidification and reducing atmospheric CO2.
-            </p>
-          </div>
-
-          <button
-            onClick={() =>
-              featuredPapers[0]?.id && navigate(`/research/${featuredPapers[0].id}`)
-            }
-            className="md:absolute right-12 bottom-12 px-8 py-2.5 border border-(--accent-action) text-(--accent-action) rounded-lg font-bold hover:bg-(--accent-action) hover:text-white transition-all cursor-pointer"
-          >
-            View Research
-          </button>
-        </div>
-      </section>
 
       {/* Grid */}
       <main className="max-w-7xl mx-auto px-6 pb-20">
@@ -105,7 +82,7 @@ const ResearchCard = ({ paper }) => {
 
       <div className="mt-8 pt-6 border-t border-(--border-subtle)">
         <p className="text-[10px] font-bold text-(--text-muted) uppercase tracking-widest">
-          {paper.institution || "CIMMYT MEXICO"}
+          {paper.institution || "Unnamed Institution"}
         </p>
       </div>
     </div>
