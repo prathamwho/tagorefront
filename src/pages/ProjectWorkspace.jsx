@@ -42,11 +42,11 @@ const ProjectWorkspace = () => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", 'tagore_pdf');
-    formData.append("folder", "Tagore_Cloud");
+    formData.append("folder", "Tagore_Cloud"); // uploading paper to cloudinary
 
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dvbbmbius/raw/upload",
+      "https://api.cloudinary.com/v1_1/dvbbmbius/raw/upload", //uploading as raw file for pdf
       { method: "POST", body: formData }
     );
 
@@ -58,7 +58,7 @@ const ProjectWorkspace = () => {
       return;
     }
 
-    const url = data.secure_url + "?response-content-disposition=inline";
+    const url = data.secure_url + "?response-content-disposition=inline"; //getting the uploaded file url
 
 
     setFiles((prev) =>
