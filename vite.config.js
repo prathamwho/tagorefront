@@ -16,4 +16,8 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ['pdf-parse']
+  }
 });
+

@@ -10,7 +10,6 @@ const Discover = () => {
 
   useEffect(() => {
     fetchDiscovery();
-    console.log("meow meow",gridPapers)
   }, [gridPapers]);
   
   return (

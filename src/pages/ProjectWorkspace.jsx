@@ -1,30 +1,36 @@
 import React, { useEffect, useRef, useState } from 'react';
 import NoteEditor from '../lib/tiptap';
-
+import toast from 'react-hot-toast';
+import { axiosInstance } from '../lib/axios';
 import { useLocation, Link } from 'react-router-dom';
+import {PDFParse} from 'pdf-parse';
+PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs'); //For browser build, set the web worker explicitly.
+
 import {
   FileText, FileJson, X,
   Settings, MessageSquare, Share2, Plus,
   PenTool, LayoutGrid, Maximize2
 } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { axiosInstance } from '../lib/axios';
+
 
 const ProjectWorkspace = () => {
-
+  
   const location = useLocation();
   // Get papers passed from the search screen (or default to empty if visited directly)
   const initialPapers = location.state?.selectedPapers || [];
-
+  
   const [files, setFiles] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [noteValue, setNoteValue] = useState("<p></p>");
 
-
+  const [allText, setAllText] = useState("");
   
 
+  
+  
   const fetchedOnce = useRef(false);
+  
 
 
   const uploadPaper = async (e, paperId) => {
@@ -59,6 +65,14 @@ const ProjectWorkspace = () => {
     }
 
     const url = data.secure_url + "?response-content-disposition=inline"; //getting the uploaded file url
+
+    //parsing pdf file 
+
+
+    const parser = new PDFParse({url: url});  
+    const pdfresult = await parser.getText();
+    setAllText(allText + " /newfile " + pdfresult.text);
+    console.log("alltext: ",allText);
 
 
     setFiles((prev) =>
