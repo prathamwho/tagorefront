@@ -61,7 +61,7 @@ function ProfileEdit() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // ✅ cookie auth
+        credentials: "include", // cookie auth
         body: JSON.stringify(form),
       });
 

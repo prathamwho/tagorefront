@@ -32,6 +32,37 @@ const ProjectWorkspace = () => {
   const fetchedOnce = useRef(false);
   
 
+  const workPDF = async(url) => { //parses pdf into text file which sends to backend
+
+    try {
+
+      const parser = new PDFParse({url: url});  
+      const pdfresult = await parser.getText();
+      setAllText(allText + " /newfile " + pdfresult.text); //all text from all seclected research papers
+      
+      const res = await fetch("http://localhost:1601/api/llm/send-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // cookie auth
+        body: JSON.stringify(allText),
+      });
+
+      const result = res.json();
+      console.log(result.message);
+
+
+    } catch (error) {
+      toast.error("Error reading research papers")
+      
+    }
+
+
+
+
+  }
+
 
   const uploadPaper = async (e, paperId) => {
   try {
@@ -51,8 +82,7 @@ const ProjectWorkspace = () => {
     formData.append("folder", "Tagore_Cloud"); // uploading paper to cloudinary
 
 
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dvbbmbius/raw/upload", //uploading as raw file for pdf
+    const res = await fetch("https://api.cloudinary.com/v1_1/dvbbmbius/raw/upload", //uploading as raw file for pdf
       { method: "POST", body: formData }
     );
 
@@ -67,13 +97,7 @@ const ProjectWorkspace = () => {
     const url = data.secure_url + "?response-content-disposition=inline"; //getting the uploaded file url
 
     //parsing pdf file 
-
-
-    const parser = new PDFParse({url: url});  
-    const pdfresult = await parser.getText();
-    setAllText(allText + " /newfile " + pdfresult.text);
-    console.log("alltext: ",allText);
-
+    workPDF(url);
 
     setFiles((prev) =>
       prev.map((f) =>
