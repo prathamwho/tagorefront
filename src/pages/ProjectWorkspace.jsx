@@ -3,13 +3,14 @@ import NoteEditor from '../lib/tiptap';
 import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { useLocation, Link } from 'react-router-dom';
+import ChatPanel from '../components/layout/ChatPanel.jsx';
 import {PDFParse} from 'pdf-parse';
 PDFParse.setWorker('https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs'); //For browser build, set the web worker explicitly.
 
 import {
   FileText, FileJson, X,
   Settings, MessageSquare, Share2, Plus,
-  PenTool, LayoutGrid, Maximize2
+  PenTool, LayoutGrid, Maximize2, ArrowBigLeftDash
 } from 'lucide-react';
 
 
@@ -55,11 +56,7 @@ const ProjectWorkspace = () => {
 
     } catch (error) {
       toast.error("Error reading research papers")
-      
     }
-
-
-
 
   }
 
@@ -413,40 +410,27 @@ const downloadFile = (content, filename, mimeType) => {
         </main>
 
         {/* 3. RIGHT SIDEBAR (TOOLS) */}
-        {rightPanelOpen && (
-          <aside className="w-80 bg-[#0d1117] border-l border-[#30363d] flex flex-col" id="workspace-right-panel">
-            <div className="h-9 border-b border-[#30363d] flex items-center px-2 bg-[#161b22]" id="workspace-right-panel-header">
+        {rightPanelOpen?(
+          <div className="max-w-80 flex flex-col min-h-0">
+          <div className="h-9 border-b border-[#30363d] flex items-center px-2 bg-[#161b22]" id="workspace-right-panel-header">
               <div className="flex-1 flex gap-1" id="workspace-right-panel-tabs">
-                <button className="px-3 py-1 text-xs font-medium text-white border-b-2 border-[#1f6feb]" id="right-tab-graph">Graph</button>
-                <button className="px-3 py-1 text-xs font-medium text-[#8b949e] hover:text-white" id="right-tab-chat">Chat</button>
-                <button className="px-3 py-1 text-xs font-medium text-[#8b949e] hover:text-white" id="right-tab-citations">Citations</button>
+                <button className="px-3 py-1 text-xs font-medium text-white border-b-2 border-[#1f6feb]" id="right-tab-graph">Chat</button>
               </div>
               <button onClick={() => setRightPanelOpen(false)} id="right-panel-close-btn">
                 <X size={14} className="text-[#8b949e]" />
               </button>
             </div>
-
-            <div className="flex-1 p-4 relative overflow-hidden" id="workspace-right-panel-body">
-              <div className="relative z-10 text-center mt-60" id="workspace-right-panel-graph-info">
-                <h3 className="text-sm font-semibold text-[#c9d1d9]" id="graph-title">Knowledge Graph</h3>
-                <p className="text-xs text-[#8b949e] mt-1" id="graph-desc">
-                  Visualizing connections between {Math.max(0, (files.length)-1)} papers.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-3 border-t border-[#30363d] bg-[#161b22]" id="workspace-chat-input-wrap">
-              <div className="flex items-center gap-2 bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-2" id="workspace-chat-input">
-                <MessageSquare size={14} className="text-[#8b949e]" id="workspace-chat-icon" />
-                <input
-                  id="workspace-chat-text"
-                  type="text"
-                  placeholder="Ask AI about these papers..."
-                  className="bg-transparent text-xs text-white w-full outline-none"
-                />
-              </div>
-            </div>
-          </aside>
+          <ChatPanel/>          
+          </div>
+        ):(
+          <div>
+            <button
+              className="button--primary fixed right-0 top-1/2 -translate-y-1/2 z-50 flex items-center justify-center p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-l-md"
+              onClick={() => setRightPanelOpen(true)}
+            >
+              <ArrowBigLeftDash size={14} className="text-white" />
+            </button>
+          </div>
         )}
       </div>
 
