@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import { useResearchStore } from '../store/useResearchStore';
-import { ArrowLeft, Clock, Share2, DollarSign, Info } from 'lucide-react';
+import { ArrowLeft, Clock, Share2, DollarSign, Info, BookOpen, Tag } from 'lucide-react';
 
 const PaperView = () => {
   const { id } = useParams();
@@ -16,6 +16,7 @@ const PaperView = () => {
   if (isLoading || !selectedPaper) return <div className="min-h-screen bg-(--surface-primary) animate-pulse" />;
 
   const progress = (selectedPaper.amountRaised / selectedPaper.fundingGoal) * 100;
+  console.log("here",selectedPaper)
 
   return (
     <div className="min-h-screen bg-(--surface-primary) text-(--text-primary)">
@@ -33,7 +34,7 @@ const PaperView = () => {
             <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-(--accent-action) mb-6">
               <span className="truncate max-w-50">{selectedPaper.category}</span>
               <span className="w-1 h-1 rounded-full bg-(--border-subtle)"></span>
-              <span className="text-(--text-muted)">Published Oct 2024</span>
+              <span className="text-(--text-muted)">Published {selectedPaper.year}</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold leading-[1.1] mb-8 tracking-tight">
@@ -43,7 +44,7 @@ const PaperView = () => {
             {/* AUTHOR LIST: Defensive Truncation (2 lines max) */}
             <div className="flex items-start gap-4 mb-12 group">
               <div className="w-12 h-12 shrink-0 rounded-full bg-linear-to-br from-(--accent-action) to-purple-600 flex items-center justify-center text-white font-bold text-lg">
-                M
+                <BookOpen />
               </div>
               <div className="min-w-0">
                 <p className="font-bold text-(--text-primary) leading-tight line-clamp-2 mb-1">
@@ -52,6 +53,14 @@ const PaperView = () => {
                 <p className="text-xs text-(--text-muted) uppercase tracking-widest font-medium truncate">
                   {selectedPaper.institution}
                 </p>
+                { (selectedPaper.tags.length!=0)&&<p className="font-bold text-(--text-primary) leading-tight line-clamp-2 mb-1">
+                  {"Tags:"}
+                </p>}
+                <ul className="text-xs text-(--text-muted) uppercase tracking-widest font-medium truncate">
+                  {selectedPaper.tags.map((tag, index)=>(
+                    <li key={index}>{tag}</li>
+                  ))}
+                </ul>
               </div>
             </div>
 
@@ -73,11 +82,11 @@ const PaperView = () => {
             </article>
           </div>
 
-          {/* RIGHT: REALISM WIDGET */}
+          {/*  
           <div className="sticky top-28">
             <div className="bg-(--surface-primary) border border-(--border-subtle) rounded-[28px] p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
               
-              {/* TRIPLE-STOP GRADIENT BAR */}
+        
               <div className="w-full bg-(--border-subtle) h-2 rounded-full mb-8 overflow-hidden relative">
                 <div 
                   className="h-full rounded-full transition-all duration-1000 ease-out" 
@@ -109,7 +118,7 @@ const PaperView = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>
