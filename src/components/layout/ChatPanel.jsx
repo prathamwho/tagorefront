@@ -5,10 +5,6 @@ function ChatPanel() {
 
   const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState([
-    {
-      text: "hhhhhhhhhhhhsddddddddddddddddddddssssssssssssssssssssssssssss",
-      sender: 'ai'
-    }
   ]);
 
   const handleInputSubmit = (e) => {
