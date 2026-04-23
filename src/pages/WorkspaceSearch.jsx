@@ -308,9 +308,10 @@ const WorkspaceSearch = () => {
           searchState === 'RESULTS' ? 'opacity-100 pt-56 pb-40' : 'opacity-0 pointer-events-none pt-0'
         }`}>
           
+          {/* add results number
           <p className="text-sm text-(--text-muted) mb-8 font-medium">
             Search for "{query}" yielded {results.length.toLocaleString()} results:
-          </p>
+          </p> */}
 
           <div className="space-y-2">
             {currentResults.map((paper) => (
@@ -356,7 +357,7 @@ const WorkspaceSearch = () => {
         </div>
 
         {/* --- 4. WORKSPACE BUCKET (Bottom-Right Action) --- */}
-        {selectedPapers.length > 0 && (
+        {selectedPapers.length > 0 || selectedPapers.length===0 && (
           <WorkspaceBucket 
             count={selectedPapers.length} 
             onEnter={() => navigate('/workspace/ide', { state: { selectedPapers } })} 
