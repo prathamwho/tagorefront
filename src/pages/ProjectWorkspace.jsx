@@ -24,6 +24,12 @@ const ProjectWorkspace = () => {
   const [activeTab, setActiveTab] = useState(null);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [noteValue, setNoteValue] = useState("<p></p>");
+  const [projtitle, setProjTitle] = useState();
+
+  const getTitle = (e) => {
+    setProjTitle(e.target.value);
+    console.log(projtitle)
+  }
 
   const [allText, setAllText] = useState("");
   
@@ -115,6 +121,9 @@ const ProjectWorkspace = () => {
 /* NOTE DOWNLOAD */
 
 const downloadFile = (content, filename, mimeType) => {
+  if(projtitle===''){
+    filename = "untitled"
+  }
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
 
@@ -139,13 +148,13 @@ const downloadFile = (content, filename, mimeType) => {
     ${noteValue}
     </body>
     </html>`;
-
-    downloadFile(htmlDoc, "ResearchNotes.html", "text/html");
+    console.log(projtitle)
+    downloadFile(htmlDoc, projtitle, "text/html");
   };
 
   const downloadNoteAsTXT = () => {
       const plainText = noteValue.replace(/<[^>]*>/g, "");
-      downloadFile(plainText, "ResearchNotes.txt", "text/plain");
+      downloadFile(plainText, projtitle, "text/plain");
   };
 
 
@@ -239,7 +248,7 @@ const downloadFile = (content, filename, mimeType) => {
               T
             </div>
           </Link>
-          <span className="text-sm font-medium" id="workspace-title">Untitled Research Project</span>
+          <input className="text-sm font-medium" id="workspace-title" onChange={getTitle} placeholder='Untitled Research Project'></input>
         </div>
 
         <div className="flex items-center gap-3" id="workspace-header-right">
