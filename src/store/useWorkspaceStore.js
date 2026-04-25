@@ -33,6 +33,39 @@ const normalizePaper = (paper) => {
   };
 };
 
+const normalizePaperUrl = (url) => {
+  const parsed = new URL(url);
+  const blockedHosts = ["youtube.com", "youtu.be", "twitter.com", "x.com", "instagram.com", "facebook.com"];
+  const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
+  const likelyArticle =
+    parsed.pathname.toLowerCase().endsWith(".pdf") ||
+    parsed.pathname.split("/").filter(Boolean).length >= 1 ||
+    ["doi.org", "arxiv.org", "pubmed.ncbi.nlm.nih.gov"].includes(host);
+
+  if (blockedHosts.some((blockedHost) => host === blockedHost || host.endsWith(`.${blockedHost}`)) || !likelyArticle) {
+    throw new Error("URL does not look like a paper or article");
+  }
+
+  const title = parsed.pathname
+    .split("/")
+    .filter(Boolean)
+    .pop()
+    ?.replace(/[-_]/g, " ")
+    ?.replace(/\.\w+$/, "");
+
+  return {
+    id: `url-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    type: "paper",
+    title: title || parsed.hostname.replace(/^www\./, ""),
+    authors: "",
+    venue: host,
+    year: "",
+    abstract: "Paper added from URL.",
+    rawUrl: parsed.href,
+    pdfUrl: parsed.pathname.toLowerCase().endsWith(".pdf") ? parsed.href : "",
+  };
+};
+
 const normalizeUpload = (file) => ({
   id: String(file.id),
   type: file.type || "file",
@@ -110,6 +143,38 @@ export const useWorkspaceStore = create((set, get) => ({
           : state.saveStatus,
       };
     }),
+
+  addPaperFromUrl: async (url) => {
+    const projectId = get().projectId;
+    if (!projectId) {
+      set({ error: "Create a workspace before adding papers" });
+      return null;
+    }
+
+    try {
+      const paper = normalizePaperUrl(url);
+      set((state) => {
+        const papers = [...state.workspaceData.papers, paper];
+        return {
+          workspaceData: {
+            ...state.workspaceData,
+            papers,
+          },
+          activePapers: [...state.activePapers, paper.id],
+          openTabs: [...state.openTabs, paper],
+          activeTabId: paper.id,
+          saveStatus: "Unsaved changes",
+          error: null,
+        };
+      });
+
+      await get().saveDraft();
+      return paper;
+    } catch {
+      set({ error: "Enter a valid paper URL" });
+      return null;
+    }
+  },
 
   closeTab: (id) =>
     set((state) => {

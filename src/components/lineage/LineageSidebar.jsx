@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Clock, GitCommitVertical, RefreshCcw, RotateCcw } from "lucide-react";
+import { ChevronDown, Clock, GitCommitVertical, RefreshCcw, RotateCcw } from "lucide-react";
 import { useEditorStore } from "../../store/useEditorStore";
 import { useLineageStore } from "../../store/useLineageStore";
 import { useWorkspaceStore } from "../../store/useWorkspaceStore";
@@ -70,6 +70,7 @@ const LineageSidebar = () => {
   } = useWorkspaceStore();
 
   const [confirmPending, setConfirmPending] = useState(null);
+  const [showAllMilestones, setShowAllMilestones] = useState(false);
 
   useEffect(() => {
     if (!projectId) return;
@@ -132,6 +133,8 @@ const LineageSidebar = () => {
     if (!projectId) return;
     fetchMilestones(projectId);
   };
+
+  const visibleMilestones = showAllMilestones ? milestones : milestones.slice(0, 3);
 
   return (
     <>
@@ -220,7 +223,7 @@ const LineageSidebar = () => {
               <div className="absolute left-[11px] top-3 bottom-3 w-0.5 bg-(--border-subtle)" />
 
               <div className="space-y-4">
-                {milestones.map((milestone) => {
+                {visibleMilestones.map((milestone) => {
                   const milestoneId = getMilestoneId(milestone);
                   const isActive = milestoneId === activeMilestoneId;
                   const nodeSize = milestone.isMajor ? "w-7 h-7" : "w-6 h-6";
@@ -297,6 +300,27 @@ const LineageSidebar = () => {
                   );
                 })}
               </div>
+
+              {milestones.length > 3 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllMilestones((value) => !value)}
+                  className="group mt-5 w-full overflow-hidden rounded-2xl border border-(--accent-action)/40 bg-linear-to-r from-(--accent-action)/10 via-(--surface-featured) to-(--accent-action)/5 px-4 py-3 text-xs text-(--accent-action) shadow-[0_0_28px_rgba(245,158,11,0.08)] transition-all hover:border-(--accent-action) hover:shadow-[0_0_34px_rgba(245,158,11,0.18)]"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="grid h-6 w-6 place-items-center rounded-full border border-(--accent-action)/50 bg-(--accent-action)/10 transition-transform group-hover:scale-105">
+                      <Clock size={13} />
+                    </span>
+                    <span className="font-semibold">
+                      {showAllMilestones ? "Show Latest Only" : `View All Milestones (${milestones.length})`}
+                    </span>
+                    <ChevronDown
+                      size={15}
+                      className={`transition-transform duration-300 ${showAllMilestones ? "rotate-180" : ""}`}
+                    />
+                  </span>
+                </button>
+              )}
             </div>
           )}
         </div>

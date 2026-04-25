@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
+  ArrowUp,
   ChevronDown,
   ChevronRight,
   Database,
@@ -9,6 +11,7 @@ import {
   FileText,
   Folder,
   Plus,
+  Search,
   Sigma,
   Type,
   Upload,
@@ -52,25 +55,54 @@ const SidebarRow = ({ active, icon: Icon, title, subtitle, onClick }) => (
 );
 
 const WorkspaceSidebar = () => {
+  const navigate = useNavigate();
   const projectId = useWorkspaceStore((state) => state.projectId);
   const activeTabId = useWorkspaceStore((state) => state.activeTabId);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
   const openTab = useWorkspaceStore((state) => state.openTab);
   const uploadFile = useWorkspaceStore((state) => state.uploadFile);
   const createDoc = useWorkspaceStore((state) => state.createDoc);
+  const addPaperFromUrl = useWorkspaceStore((state) => state.addPaperFromUrl);
   const isUploading = useWorkspaceStore((state) => state.isUploading);
 
   const fileInputRef = useRef(null);
   const folderInputRef = useRef(null);
   const [uploadsOpen, setUploadsOpen] = useState(true);
+  const [papersOpen, setPapersOpen] = useState(true);
   const [newMenuOpen, setNewMenuOpen] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
+  const [paperInputOpen, setPaperInputOpen] = useState(false);
+  const [paperQuery, setPaperQuery] = useState("");
 
   const handleUpload = async (event) => {
     const files = event.target.files;
     await uploadFile(projectId, files);
     event.target.value = "";
     setAddMenuOpen(false);
+  };
+
+  const handleAddPaperSubmit = async (event) => {
+    event.preventDefault();
+    const value = paperQuery.trim();
+    if (!value) return;
+
+    const isUrl = /^https?:\/\//i.test(value);
+    if (isUrl) {
+      const paper = await addPaperFromUrl(value);
+      if (paper) {
+        setPaperInputOpen(false);
+        setPaperQuery("");
+      }
+      return;
+    }
+
+    navigate("/workspace", {
+      state: {
+        initialQuery: value,
+        addToProjectId: projectId,
+        existingPapers: workspaceData.papers,
+      },
+    });
   };
 
   return (
@@ -82,29 +114,52 @@ const WorkspaceSidebar = () => {
 
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         <section>
-          <div className="flex items-center justify-between px-2 mb-2">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Active Papers</p>
-            <span className="text-[10px] text-slate-500">{workspaceData.papers.length}</span>
+          <div className="relative">
+            <div className="flex items-center justify-between px-2 mb-2">
+              <button
+                type="button"
+                onClick={() => setPapersOpen((value) => !value)}
+                className="flex items-center gap-1 text-[11px] uppercase tracking-[0.18em] text-slate-500 hover:text-slate-300"
+              >
+                {papersOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                Active Papers
+              </button>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPaperInputOpen((value) => !value)}
+                  className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-amber-300"
+                >
+                  <Plus size={13} />
+                  Add Paper
+                </button>
+                <span className="text-[10px] text-slate-500">{workspaceData.papers.length}</span>
+              </div>
+            </div>
+
           </div>
 
-          <div className="space-y-1">
-            {workspaceData.papers.length === 0 ? (
-              <p className="px-3 py-3 text-xs text-slate-500 border border-dashed border-white/10 rounded-xl">
-                No papers selected yet.
-              </p>
-            ) : (
-              workspaceData.papers.map((paper) => (
-                <SidebarRow
-                  key={paper.id}
-                  active={activeTabId === paper.id}
-                  icon={FileText}
-                  title={paper.title}
-                  subtitle={[paper.venue, paper.year].filter(Boolean).join(", ")}
-                  onClick={() => openTab(paper)}
-                />
-              ))
-            )}
-          </div>
+          {papersOpen && (
+            <div className="space-y-1">
+              {workspaceData.papers.length === 0 ? (
+                <p className="px-3 py-3 text-xs text-slate-500 border border-dashed border-white/10 rounded-xl">
+                  No papers selected yet.
+                </p>
+              ) : (
+                workspaceData.papers.map((paper) => (
+                  <SidebarRow
+                    key={paper.id}
+                    active={activeTabId === paper.id}
+                    icon={FileText}
+                    title={paper.title}
+                    subtitle={[paper.venue, paper.year].filter(Boolean).join(", ")}
+                    onClick={() => openTab(paper)}
+                  />
+                ))
+              )}
+            </div>
+          )}
         </section>
 
         <section>
@@ -195,6 +250,38 @@ const WorkspaceSidebar = () => {
           )}
         </section>
       </div>
+
+      {paperInputOpen && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/55 backdrop-blur-[7px]">
+          <button
+            type="button"
+            aria-label="Close add paper search"
+            className="absolute inset-0 cursor-default"
+            onClick={() => setPaperInputOpen(false)}
+          />
+          <form
+            onSubmit={handleAddPaperSubmit}
+            className="relative z-10 w-[min(680px,calc(100vw-48px))]"
+          >
+            <div className="flex items-center gap-3 rounded-full border border-white/15 bg-[#080d12]/95 px-4 py-2.5 shadow-[0_18px_60px_rgba(0,0,0,0.65),0_0_0_1px_rgba(245,158,11,0.08)]">
+              <Search size={18} className="text-slate-500" />
+              <input
+                autoFocus
+                value={paperQuery}
+                onChange={(event) => setPaperQuery(event.target.value)}
+                placeholder="enter the name/ url of the paper"
+                className="h-8 flex-1 bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
+              />
+              <button
+                type="submit"
+                className="grid h-8 w-8 place-items-center rounded-full bg-[#4f9dff] text-white shadow-[0_0_22px_rgba(79,157,255,0.45)] transition hover:scale-105"
+              >
+                <ArrowUp size={16} strokeWidth={3} />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="relative p-3 border-t border-white/10">
         {newMenuOpen && (

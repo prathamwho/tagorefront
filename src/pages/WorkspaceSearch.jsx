@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, ArrowUp, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '../components/layout/Navbar';
@@ -7,6 +7,7 @@ import { axiosInstance } from '../lib/axios';
 
 const WorkspaceSearch = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchState, setSearchState] = useState('IDLE'); // IDLE | SEARCHING | RESULTS
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -14,6 +15,11 @@ const WorkspaceSearch = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isStartingWorkspace, setIsStartingWorkspace] = useState(false);
   const resultsPerPage = 6;
+  const addToProjectId = location.state?.addToProjectId || null;
+  const existingPapers = useMemo(
+    () => Array.isArray(location.state?.existingPapers) ? location.state.existingPapers : [],
+    [location.state?.existingPapers]
+  );
 
   // --- SEARCH HANDLER ---
   const handleSearch = async (e) => {
@@ -31,6 +37,24 @@ const WorkspaceSearch = () => {
       setSearchState('IDLE');
     }
   };
+
+  useEffect(() => {
+    const initialQuery = location.state?.initialQuery;
+    if (!initialQuery) return;
+    setQuery(initialQuery);
+    setSearchState('SEARCHING');
+
+    axiosInstance.post('/article/search', { parameter: initialQuery })
+      .then((res) => {
+        setResults(res.data.results || []);
+        setSearchState('RESULTS');
+        setCurrentPage(1);
+      })
+      .catch((error) => {
+        console.error("Search failed", error);
+        setSearchState('IDLE');
+      });
+  }, [location.state?.initialQuery]);
 
   // --- PAGINATION LOGIC ---
   const totalPages = Math.ceil(results.length / resultsPerPage);
@@ -53,8 +77,26 @@ const WorkspaceSearch = () => {
     if (isStartingWorkspace) return;
     setIsStartingWorkspace(true);
     const workspaceSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const mergedPapers = [...existingPapers, ...selectedPapers].filter(
+      (paper, index, papers) => paper?.id && papers.findIndex((item) => item?.id === paper.id) === index
+    );
 
     try {
+      if (addToProjectId) {
+        await axiosInstance.patch(`/projects/${addToProjectId}/draft`, {
+          activePapers: mergedPapers.map((paper) => String(paper.id)),
+          paperLibrary: mergedPapers,
+        });
+
+        navigate(`/workspace/ide/${addToProjectId}`, {
+          state: {
+            selectedPapers: mergedPapers,
+            projectId: addToProjectId,
+          },
+        });
+        return;
+      }
+
       const res = await axiosInstance.post('/projects', {
         title: `Untitled Research Project ${workspaceSeed}`,
         abstract:     'Workspace draft created from Tagore Scribe.',
@@ -63,8 +105,8 @@ const WorkspaceSearch = () => {
         category:     'Workspace',
         tags:         [],
         fundingGoal:  0,
-        activePapers: selectedPapers.map((paper) => String(paper.id)),
-        paperLibrary: selectedPapers,
+        activePapers: mergedPapers.map((paper) => String(paper.id)),
+        paperLibrary: mergedPapers,
       });
 
       // Guard: API may return 200 with an error body (e.g. expired auth)
@@ -72,7 +114,7 @@ const WorkspaceSearch = () => {
       if (!projectId) throw new Error(res.data?.message || 'Project creation returned no ID');
 
       navigate(`/workspace/ide/${projectId}`, {
-        state: { selectedPapers, projectId },
+        state: { selectedPapers: mergedPapers, projectId },
       });
 
     } catch (error) {
@@ -81,7 +123,7 @@ const WorkspaceSearch = () => {
 
       // Always open workspace — lineage features require a project but the editor works without one
       toast.warning(`Opening in local mode — ${message}`);
-      navigate('/workspace/ide', { state: { selectedPapers } });
+      navigate('/workspace/ide', { state: { selectedPapers: mergedPapers } });
 
     } finally {
       setIsStartingWorkspace(false);
@@ -192,6 +234,7 @@ const WorkspaceSearch = () => {
           <WorkspaceBucket 
             count={selectedPapers.length} 
             disabled={isStartingWorkspace}
+            mode={addToProjectId ? "add" : "enter"}
             onEnter={handleEnterWorkspace} 
           />
         )}
@@ -266,7 +309,7 @@ const SearchResultItem = ({ paper, isSelected, onToggle }) => {
 };
 
 // --- WORKSPACE BUCKET (FAB) ---
-const WorkspaceBucket = ({ count, disabled, onEnter }) => {
+const WorkspaceBucket = ({ count, disabled, mode, onEnter }) => {
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <button 
@@ -276,7 +319,11 @@ const WorkspaceBucket = ({ count, disabled, onEnter }) => {
       >
         <FileText size={18} className="group-hover:scale-110 transition-transform" />
         <span className="text-sm font-bold">
-          {disabled ? 'Starting Workspace...' : `Enter Workspace (${count})`}
+          {disabled
+            ? 'Starting Workspace...'
+            : mode === 'add'
+              ? `Add Papers (${count})`
+              : `Enter Workspace (${count})`}
         </span>
       </button>
     </div>
