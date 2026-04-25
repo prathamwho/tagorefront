@@ -68,6 +68,7 @@ function App() {
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/fund/:id" element={authUser ? <FundProject /> : <Navigate to="/login" />} />
         <Route path="/workspace" element={authUser ? <WorkspaceSearch /> : <Navigate to="/login" />} />
+        <Route path="/workspace/ide/:projectId" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
         <Route path='/profile/:userId' element={authUser ? <ProfileEdit /> : <Navigate to="/login" />}/>
         <Route path='/*' element={<NotFound/>}/>
