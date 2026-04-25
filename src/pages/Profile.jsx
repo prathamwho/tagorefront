@@ -19,7 +19,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-(--surface-primary) text-(--text-primary)">
-      <div className="grid min-h-screen grid-cols-[240px_1fr_340px]">
+      <div className="grid min-h-screen grid-cols-[220px_minmax(720px,1fr)_360px]">
         <DashboardSidebar />
         <DashboardCenterPane
           profile={profile}
