@@ -63,6 +63,8 @@ const WorkspaceSearch = () => {
         category:     'Workspace',
         tags:         [],
         fundingGoal:  0,
+        activePapers: selectedPapers.map((paper) => String(paper.id)),
+        paperLibrary: selectedPapers,
       });
 
       // Guard: API may return 200 with an error body (e.g. expired auth)

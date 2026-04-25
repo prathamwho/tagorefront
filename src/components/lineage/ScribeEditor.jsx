@@ -3,7 +3,6 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import { useEditorStore } from "../../store/useEditorStore";
-import { useLineageStore } from "../../store/useLineageStore";
 import { useWorkspaceStore } from "../../store/useWorkspaceStore";
 
 /* ─── Toolbar button ─────────────────────────────────────────────────────── */
@@ -24,34 +23,10 @@ const ToolbarBtn = ({ active, disabled, onClick, children }) => (
 );
 
 /* ─── Save status pill ───────────────────────────────────────────────────── */
-const SaveStatusBadge = ({ projectId, saveStatus }) => (
-  <span
-    className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium font-satoshi
-      ${saveStatus === "Saved"
-        ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-        : saveStatus === "Saving..."
-          ? "bg-blue-50 border-blue-200 text-blue-600"
-          : "bg-amber-50 border-amber-200 text-amber-600"
-      }`}
-  >
-    <span
-      className={`w-1.5 h-1.5 rounded-full shrink-0
-        ${saveStatus === "Saved"
-          ? "bg-emerald-400"
-          : saveStatus === "Saving..."
-            ? "bg-blue-400"
-            : "bg-amber-400"
-        }`}
-    />
-    {projectId ? saveStatus : "Local draft"}
-  </span>
-);
-
 /* ─── ScribeEditor ───────────────────────────────────────────────────────── */
 const ScribeEditor = () => {
   const { content, setContent } = useEditorStore();
-  const { openModal } = useLineageStore();
-  const { projectId, activePapers, saveStatus, setManuscriptContent, saveDraft } =
+  const { activePapers, setManuscriptContent, saveDraft } =
     useWorkspaceStore();
 
   // ── Refs so the debounced function never needs to be recreated ──────────
@@ -117,7 +92,6 @@ const ScribeEditor = () => {
             Tagore Scribe
           </span>
           <span className="text-xs text-(--text-muted)">Manuscript</span>
-          <SaveStatusBadge projectId={projectId} saveStatus={saveStatus} />
         </div>
 
         {/* Toolbar */}
@@ -158,15 +132,6 @@ const ScribeEditor = () => {
             onClick={() => editor.chain().focus().redo().run()}
           >Redo</ToolbarBtn>
 
-          <div className="w-px h-4 bg-(--border-subtle) mx-1" />
-
-          <button
-            type="button"
-            onClick={openModal}
-            className="px-4 py-1.5 rounded-md text-xs font-semibold bg-(--accent-action) text-white cursor-pointer transition-all duration-300 ease-out hover:opacity-90 active:scale-95"
-          >
-            Register Milestone
-          </button>
         </div>
       </div>
 
