@@ -27,7 +27,9 @@ const LeftPanel = () => {
         <NavItem icon={<Database size={16} />} label="MCP registry" /> */}
       </nav>
 
+
       {/* Top Repositories Section */}
+      {/* 
       <div className="px-2 mt-6">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-semibold text-xs text-[#c9d1d9]">Top repositories</h3>
@@ -39,9 +41,9 @@ const LeftPanel = () => {
            <RepoItem name="ginsingh/FlightsAndSearch" />
            <RepoItem name="lawleo2/aiagent" />
            <RepoItem name="unidentifieduser/AuthService" />
-        </div>
+        </div> 
       </div>
-
+*/}
     </aside>
   );
 };

@@ -9,16 +9,12 @@ const ProjectGrid = ({ projects }) => {
           className="group aspect-square flex flex-col border border-[#30363d] rounded-md bg-[#0d1117] hover:border-[#8b949e] transition-colors cursor-pointer overflow-hidden"
         >
           {/* Top 60%: Placeholder / Preview Area */}
-          <div className="h-[60%] w-full bg-[#161b22] border-b border-[#30363d] flex items-center justify-center relative group-hover:bg-[#1c2128] transition-colors">
+          <div className="h-[60%] w-full bg-[#ccd3dc] border-b border-[#95999e] flex items-center justify-center relative group-hover:bg-[#c6ced9] transition-colors">
             {/* Visual Placeholder text (Remove later when you have images) */}
-            <span className="text-[#30363d] font-mono text-xs select-none">
+            <span className="text-[#30363d] font-mono text-xs select-none ">
                 PREVIEW
             </span>
-            
-            {/* Public Badge overlay */}
-            <span className="absolute top-3 right-3 text-[10px] border border-[#30363d] text-[#8b949e] bg-[#0d1117] rounded-full px-2 py-0.5">
-              {project.visibility}
-            </span>
+
           </div>
 
           {/* Bottom 40%: Content Area */}
@@ -28,7 +24,7 @@ const ProjectGrid = ({ projects }) => {
                 {project.title}
               </h3>
               <p className="text-xs text-[#8b949e] line-clamp-2 leading-relaxed">
-                {project.description}
+                {project.abstract}
               </p>
             </div>
 
@@ -43,7 +39,6 @@ const ProjectGrid = ({ projects }) => {
                   <span>{project.tags[0]}</span>
                 </div>
               )}
-              <span>Updated {project.updated_at}</span>
             </div>
           </div>
         </div>

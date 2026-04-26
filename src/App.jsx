@@ -15,6 +15,7 @@ import ProjectWorkspace from './pages/ProjectWorkspace';
 import { Toaster } from 'sonner';
 import NotFound from './pages/NotFound';
 import ProfileEdit from './pages/ProfileEdit';
+import NewPaper from './pages/NewPaper';
 
 function App() {
   const {
@@ -71,6 +72,8 @@ function App() {
         <Route path="/workspace/ide" element={authUser ? <ProjectWorkspace /> : <Navigate to="/login" />} />
         <Route path='/profile/:userId' element={authUser ? <ProfileEdit /> : <Navigate to="/login" />}/>
         <Route path='/*' element={<NotFound/>}/>
+        <Route path="/submit" element={authUser ? <NewPaper /> : <Navigate to="/login" />} />
+
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
