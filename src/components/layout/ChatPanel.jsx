@@ -77,7 +77,6 @@ function ChatPanel() {
 
       </div>
 
-      {/* INPUT */}
       <div className="p-3 border-t border-[#30363d] bg-[#161b22]">
         <div className="flex items-center gap-2 bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-2">
           <form
