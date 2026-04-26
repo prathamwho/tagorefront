@@ -1,17 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, ArrowUp, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import Navbar from '../components/layout/Navbar';
 import { axiosInstance } from '../lib/axios';
 
 const WorkspaceSearch = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchState, setSearchState] = useState('IDLE'); // IDLE | SEARCHING | RESULTS
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [selectedPapers, setSelectedPapers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isStartingWorkspace, setIsStartingWorkspace] = useState(false);
   const resultsPerPage = 6;
+  const addToProjectId = location.state?.addToProjectId || null;
+  const existingPapers = useMemo(
+    () => Array.isArray(location.state?.existingPapers) ? location.state.existingPapers : [],
+    [location.state?.existingPapers]
+  );
 
   // --- SEARCH HANDLER ---
   const handleSearch = async (e) => {
@@ -30,6 +38,24 @@ const WorkspaceSearch = () => {
     }
   };
 
+  useEffect(() => {
+    const initialQuery = location.state?.initialQuery;
+    if (!initialQuery) return;
+    setQuery(initialQuery);
+    setSearchState('SEARCHING');
+
+    axiosInstance.post('/article/search', { parameter: initialQuery })
+      .then((res) => {
+        setResults(res.data.results || []);
+        setSearchState('RESULTS');
+        setCurrentPage(1);
+      })
+      .catch((error) => {
+        console.error("Search failed", error);
+        setSearchState('IDLE');
+      });
+  }, [location.state?.initialQuery]);
+
   // --- PAGINATION LOGIC ---
   const totalPages = Math.ceil(results.length / resultsPerPage);
   const currentResults = useMemo(() => {
@@ -44,6 +70,63 @@ const WorkspaceSearch = () => {
       setSelectedPapers(selectedPapers.filter(p => p.id !== paper.id));
     } else {
       setSelectedPapers([...selectedPapers, paper]);
+    }
+  };
+
+  const handleEnterWorkspace = async () => {
+    if (isStartingWorkspace) return;
+    setIsStartingWorkspace(true);
+    const workspaceSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const mergedPapers = [...existingPapers, ...selectedPapers].filter(
+      (paper, index, papers) => paper?.id && papers.findIndex((item) => item?.id === paper.id) === index
+    );
+
+    try {
+      if (addToProjectId) {
+        await axiosInstance.patch(`/projects/${addToProjectId}/draft`, {
+          activePapers: mergedPapers.map((paper) => String(paper.id)),
+          paperLibrary: mergedPapers,
+        });
+
+        navigate(`/workspace/ide/${addToProjectId}`, {
+          state: {
+            selectedPapers: mergedPapers,
+            projectId: addToProjectId,
+          },
+        });
+        return;
+      }
+
+      const res = await axiosInstance.post('/projects', {
+        title: `Untitled Research Project ${workspaceSeed}`,
+        abstract:     'Workspace draft created from Tagore Scribe.',
+        description:  `Workspace draft created from Tagore Scribe ${workspaceSeed}.`,
+        content:      '',
+        category:     'Workspace',
+        tags:         [],
+        fundingGoal:  0,
+        activePapers: mergedPapers.map((paper) => String(paper.id)),
+        paperLibrary: mergedPapers,
+      });
+
+      // Guard: API may return 200 with an error body (e.g. expired auth)
+      const projectId = res.data?._id;
+      if (!projectId) throw new Error(res.data?.message || 'Project creation returned no ID');
+
+      navigate(`/workspace/ide/${projectId}`, {
+        state: { selectedPapers: mergedPapers, projectId },
+      });
+
+    } catch (error) {
+      const message = error?.response?.data?.message || error?.message || 'Could not create project';
+      console.error('Unable to create workspace project:', message, error);
+
+      // Always open workspace — lineage features require a project but the editor works without one
+      toast.warning(`Opening in local mode — ${message}`);
+      navigate('/workspace/ide', { state: { selectedPapers: mergedPapers } });
+
+    } finally {
+      setIsStartingWorkspace(false);
     }
   };
 
@@ -150,7 +233,9 @@ const WorkspaceSearch = () => {
         {selectedPapers.length >= 0 && (
           <WorkspaceBucket 
             count={selectedPapers.length} 
-            onEnter={() => navigate('/workspace/ide', { state: { selectedPapers } })} 
+            disabled={isStartingWorkspace}
+            mode={addToProjectId ? "add" : "enter"}
+            onEnter={handleEnterWorkspace} 
           />
         )}
       </main>
@@ -224,15 +309,22 @@ const SearchResultItem = ({ paper, isSelected, onToggle }) => {
 };
 
 // --- WORKSPACE BUCKET (FAB) ---
-const WorkspaceBucket = ({ count, onEnter }) => {
+const WorkspaceBucket = ({ count, disabled, mode, onEnter }) => {
   return (
     <div className="fixed bottom-10 right-10 z-50">
       <button 
+        disabled={disabled}
         onClick={onEnter}
-        className="bg-(--surface-featured) text-(--accent-action) border border-(--accent-action)/20 px-6 py-3 rounded-2xl font-bold shadow-lg hover:bg-(--accent-action) hover:text-white transition-all flex items-center gap-3 cursor-pointer group"
+        className="bg-(--surface-featured) text-(--accent-action) border border-(--accent-action)/20 px-6 py-3 rounded-2xl font-bold shadow-lg hover:bg-(--accent-action) hover:text-white transition-all flex items-center gap-3 cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <FileText size={18} className="group-hover:scale-110 transition-transform" />
-        <span className="text-sm font-bold">Enter Workspace ({count})</span>
+        <span className="text-sm font-bold">
+          {disabled
+            ? 'Starting Workspace...'
+            : mode === 'add'
+              ? `Add Papers (${count})`
+              : `Enter Workspace (${count})`}
+        </span>
       </button>
     </div>
   );
