@@ -4,17 +4,42 @@ import { SendHorizontal } from 'lucide-react';
 function ChatPanel() {
 
   const [inputMessage, setInputMessage] = useState("");
-  const [messages, setMessages] = useState([
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputSubmit = (e) => {
+  const handleInputSubmit = async (e) => {
     e.preventDefault();
 
     const value = inputMessage.trim();
-    if (!value) return;
+    if (!value || isLoading) return;
 
     setMessages(prev => [...prev, { text: value, sender: "user" }]);
     setInputMessage("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/llm/query-chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ query: value }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Server error");
+      }
+      
+      const { apiResponse } = await res.json();
+      const message = apiResponse.output.find(item => item.type === "message");
+      const reply = message.content[0].text;
+
+      setMessages(prev => [...prev, { text: reply, sender: "ai" }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { text: err.message || "Something went wrong.", sender: "ai" }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,6 +69,12 @@ function ChatPanel() {
           </div>
         )}
 
+        {isLoading && (
+          <div className="bg-blue-600 text-white self-start px-3 py-2 rounded-lg text-sm animate-pulse">
+            Thinking...
+          </div>
+        )}
+
       </div>
 
       {/* INPUT */}
@@ -59,9 +90,10 @@ function ChatPanel() {
               placeholder="Ask AI about these papers..."
               className="flex-1 bg-transparent text-md text-white outline-none"
               onChange={e => setInputMessage(e.target.value)}
+              disabled={isLoading}
             />
 
-            <button type="submit">
+            <button type="submit" disabled={isLoading || !inputMessage.trim()}>
               <SendHorizontal size={17} />
             </button>
           </form>
