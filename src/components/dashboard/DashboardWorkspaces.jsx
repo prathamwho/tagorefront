@@ -19,13 +19,13 @@ const WorkspaceCard = ({ workspace }) => {
   const latestMilestone = workspace.latestMilestone || {};
 
   return (
-    <article className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-5 transition hover:border-amber-500/40">
+    <article className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-4 transition hover:border-amber-500/40">
       <div className="flex items-start justify-between gap-5">
         <div className="flex items-start gap-4 min-w-0">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-amber-500/30 bg-amber-500/10">
-            <BookOpen size={20} className="text-amber-400" />
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-amber-500/30 bg-amber-500/10">
+            <BookOpen size={18} className="text-amber-400" />
           </div>
-          <h3 className="line-clamp-2 text-lg font-bold leading-snug text-(--text-primary)">
+          <h3 className="line-clamp-2 text-base font-bold leading-snug text-(--text-primary)">
             {workspace.title || "Untitled Workspace"}
           </h3>
         </div>
@@ -36,7 +36,7 @@ const WorkspaceCard = ({ workspace }) => {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center gap-4 text-xs font-medium text-(--text-muted)">
+      <div className="mt-4 flex items-center gap-4 text-xs font-medium text-(--text-muted)">
         <span className="inline-flex items-center gap-1.5">
           <FileText size={13} />
           {workspace.activePaperCount || 0} Papers
@@ -48,7 +48,7 @@ const WorkspaceCard = ({ workspace }) => {
         </span>
       </div>
 
-      <div className="mt-5 border-t border-(--border-subtle) pt-4">
+      <div className="mt-4 border-t border-(--border-subtle) pt-3">
         <p className="text-[10px] font-bold uppercase tracking-widest text-(--text-muted)">Latest milestone</p>
         {latestMilestone?.title ? (
           <div className="mt-2">
@@ -63,7 +63,7 @@ const WorkspaceCard = ({ workspace }) => {
         )}
       </div>
 
-      <div className="mt-5 flex justify-end">
+      <div className="mt-4 flex justify-end">
         <button
           type="button"
           onClick={() => navigate(`/workspace/ide/${workspace.projectId}`)}
@@ -78,7 +78,7 @@ const WorkspaceCard = ({ workspace }) => {
 };
 
 const WorkspaceSkeleton = () => (
-  <div className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-5 animate-pulse">
+  <div className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-4 animate-pulse">
     <div className="h-11 w-11 rounded-lg bg-white/5" />
     <div className="mt-5 h-5 w-3/4 rounded bg-white/5" />
     <div className="mt-3 h-4 w-1/2 rounded bg-white/5" />
@@ -88,10 +88,10 @@ const WorkspaceSkeleton = () => (
 );
 
 const DashboardWorkspaces = ({ workspaces, isLoading }) => (
-  <section className="mt-8">
-    <div className="mb-5 flex items-end justify-between">
+  <section className="mt-6">
+    <div className="mb-4 flex items-end justify-between">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-(--text-primary)">Active Workspaces</h2>
+        <h2 className="text-xl font-bold tracking-tight text-(--text-primary)">Active Workspaces</h2>
         <p className="mt-1.5 text-sm text-(--text-muted)">Pick up where you left off.</p>
       </div>
 
@@ -105,13 +105,13 @@ const DashboardWorkspaces = ({ workspaces, isLoading }) => (
     </div>
 
     {isLoading ? (
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-4">
         {[0, 1, 2, 3].map((item) => (
           <WorkspaceSkeleton key={item} />
         ))}
       </div>
     ) : workspaces?.length ? (
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-4">
         {workspaces.slice(0, 4).map((workspace) => (
           <WorkspaceCard key={workspace.projectId || workspace.title} workspace={workspace} />
         ))}

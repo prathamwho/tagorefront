@@ -13,9 +13,9 @@ const DashboardProfileSummary = ({ profile }) => {
     "Research is to see what everybody else has seen, and to think what nobody else has thought.";
 
   return (
-    <section className="border-b border-(--border-subtle) pb-8">
+    <section className="border-b border-(--border-subtle) pb-6">
       <div className="flex items-start justify-between gap-8">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-7">
           <img
             src={profile?.avatar || defaultAvatar}
             alt={name}
@@ -25,11 +25,11 @@ const DashboardProfileSummary = ({ profile }) => {
           <div>
             <h1 className="text-4xl font-bold tracking-tight text-(--text-primary)">{name}</h1>
             <p className="mt-2 text-sm font-bold uppercase tracking-[0.22em] text-amber-400">{role}</p>
-            <div className="mt-5 flex items-center gap-2 text-sm text-(--text-secondary)">
+            <div className="mt-4 flex items-center gap-2 text-sm text-(--text-secondary)">
               <Mail size={16} className="text-(--text-muted)" />
               {email}
             </div>
-            <blockquote className="mt-5 max-w-xl text-base italic leading-8 text-(--text-muted)">
+            <blockquote className="mt-4 max-w-xl text-base italic leading-7 text-(--text-muted)">
               "{quote}"
             </blockquote>
           </div>

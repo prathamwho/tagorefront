@@ -4,7 +4,7 @@ import DashboardWorkspaces from "./DashboardWorkspaces";
 
 const DashboardCenterPane = ({ profile, workspaces, isLoading }) => {
   return (
-    <main className="min-h-screen overflow-y-auto bg-(--surface-primary) px-8 py-8 font-satoshi">
+    <main className="h-screen overflow-hidden bg-(--surface-primary) px-7 py-7 font-satoshi">
       <DashboardProfileSummary profile={profile} />
       <DashboardWorkspaces workspaces={workspaces} isLoading={isLoading} />
     </main>

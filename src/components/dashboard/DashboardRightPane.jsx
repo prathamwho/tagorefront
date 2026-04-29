@@ -15,18 +15,18 @@ const ChartTooltip = ({ active, payload, label }) => {
 
 const ActivityItem = ({ item, isLast }) => {
   return (
-    <div className="relative flex gap-4">
-      {!isLast && <span className="absolute left-[17px] top-9 bottom-0 w-px bg-(--border-subtle)" />}
-      <div className="z-10 grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-amber-500/25 bg-amber-500/10">
-        <Hourglass size={15} className="text-amber-400" />
+    <div className="relative flex gap-3">
+      {!isLast && <span className="absolute left-[15px] top-8 bottom-0 w-px bg-(--border-subtle)" />}
+      <div className="z-10 grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-amber-500/25 bg-amber-500/10">
+        <Hourglass size={14} className="text-amber-400" />
       </div>
 
-      <div className="min-w-0 flex-1 border-b border-(--border-subtle) pb-4">
+      <div className="min-w-0 flex-1 border-b border-(--border-subtle) pb-3">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm font-bold text-amber-400">Milestone added</p>
           <span className="shrink-0 text-xs text-(--text-muted)">{item.timeAgo}</span>
         </div>
-        <p className="mt-2 line-clamp-2 text-sm text-(--text-secondary)">
+        <p className="mt-1.5 line-clamp-2 text-xs text-(--text-secondary)">
           {item.versionName ? `${item.versionName} ` : ""}
           {item.title}
         </p>
@@ -44,9 +44,9 @@ const DashboardRightPane = ({ activityFeed = [], chartData = [], stats = {}, isL
   const workspaceCount = stats.workspaceCount || 0;
 
   return (
-    <aside className="h-screen overflow-y-auto border-l border-(--border-subtle) bg-(--surface-primary) p-6 font-satoshi">
-      <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-5">
-        <div className="mb-6 flex items-center justify-between">
+    <aside className="h-screen overflow-hidden border-l border-(--border-subtle) bg-(--surface-primary) p-5 font-satoshi">
+      <section className="rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-4">
+        <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-bold tracking-tight text-(--text-primary)">Recent Activity</h2>
           <button className="inline-flex items-center gap-1 text-xs font-bold text-amber-400 hover:text-amber-300">
             View all
@@ -55,7 +55,7 @@ const DashboardRightPane = ({ activityFeed = [], chartData = [], stats = {}, isL
         </div>
 
         {isLoading ? (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {[0, 1, 2, 3].map((item) => (
               <div key={item} className="flex gap-4 animate-pulse">
                 <div className="h-9 w-9 rounded-lg bg-white/5" />
@@ -67,12 +67,12 @@ const DashboardRightPane = ({ activityFeed = [], chartData = [], stats = {}, isL
             ))}
           </div>
         ) : activityFeed.length ? (
-          <div className="space-y-4">
-            {activityFeed.map((item, index) => (
+          <div className="space-y-3">
+            {activityFeed.slice(0, 5).map((item, index) => (
               <ActivityItem
                 key={`${item.title}-${item.createdAt || index}`}
                 item={item}
-                isLast={index === activityFeed.length - 1}
+                isLast={index === Math.min(activityFeed.length, 5) - 1}
               />
             ))}
           </div>
@@ -84,13 +84,13 @@ const DashboardRightPane = ({ activityFeed = [], chartData = [], stats = {}, isL
         )}
       </section>
 
-      <section className="mt-5 rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-5">
+      <section className="mt-4 rounded-2xl border border-(--border-subtle) bg-(--surface-secondary) p-4">
         <h2 className="text-lg font-bold tracking-tight text-(--text-primary)">Your Research Journey</h2>
         <p className="mt-2 text-sm text-(--text-muted)">
           {totalMilestones} milestones across {workspaceCount} workspaces
         </p>
 
-        <div className="mt-7 h-44">
+        <div className="mt-5 h-40">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 8, right: 4, left: -24, bottom: 0 }}>
               <defs>
